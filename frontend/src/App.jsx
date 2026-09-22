@@ -5,6 +5,9 @@ import Blogs from "./pages/Blogs";
 import BlogPostDetails from "./pages/BlogPostDetails";
 import Articles from "./pages/Articles";
 import ArticleDetails from "./pages/ArticleDetails";
+import CreateArticle from "./pages/CreateArticle";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 function App() {
@@ -17,7 +20,10 @@ function App() {
         <Route path="/blogs/:id" element={<BlogPostDetails />} />
         <Route path="/articles" element={<Articles />} />
         <Route path="/articles/:id" element={<ArticleDetails />} />
+        <Route path="/create-article" element={<CreateArticle />} />
         <Route path="/create-blog" element={<CreateBlog />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
       </Routes>
       <Footer />
     </BrowserRouter>

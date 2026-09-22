@@ -21,11 +21,7 @@ const articleSchema = new mongoose.Schema(
     sourceUrl: {
       type: String,
       default: "",
-    },
-    deleteSecret: {
-      type: String,
-      required: true,
-    },
+    }
   },
   {
     timestamps: true,

@@ -400,6 +400,44 @@ body.dark {
   cursor: pointer;
 }
 
+.blog-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.edit-blog-btn,
+.delete-blog-btn {
+  min-height: 38px;
+  padding: 0 14px;
+  border-radius: 7px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.edit-blog-btn {
+  border: 1px solid var(--primary);
+  background: var(--primary);
+  color: var(--surface);
+}
+
+.edit-blog-btn:hover {
+  border-color: var(--green);
+  background: var(--green);
+}
+
+.delete-blog-btn {
+  border-color: #cf7777;
+  background: transparent;
+  color: var(--error);
+}
+
+.delete-blog-btn:hover {
+  background: color-mix(in srgb, var(--error) 7%, transparent);
+}
+
 .delete-panel {
   width: 100%;
   padding: 18px;
@@ -517,6 +555,45 @@ body.dark {
   font-size: 11px;
 }
 
+.form-error {
+  margin: 0 0 18px;
+  color: var(--error);
+  font-size: 12px;
+}
+
+.auth-page {
+  display: grid;
+  min-height: calc(100vh - 65px);
+  place-items: start center;
+}
+
+.auth-container {
+  width: min(460px, calc(100% - 32px));
+  padding-top: 64px;
+}
+
+.auth-header {
+  margin: 30px 0 28px;
+}
+
+.auth-header h1 {
+  font-size: clamp(38px, 8vw, 48px);
+}
+
+.auth-form {
+  padding: 28px;
+  box-shadow: none;
+}
+
+.auth-form .form-group {
+  margin-bottom: 20px;
+}
+
+.auth-form .form-footer {
+  align-items: center;
+  padding-top: 4px;
+}
+
 @media (max-width: 700px) {
   .blogs-hero,
   .articles-hero,
@@ -575,5 +652,13 @@ body.dark {
 
   .site-footer {
     padding-top: 35px;
+  }
+
+  .auth-container {
+    padding-top: 40px;
+  }
+
+  .auth-form .form-footer {
+    align-items: stretch;
   }
 }

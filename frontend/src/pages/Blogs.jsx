@@ -3,12 +3,28 @@ import { Link } from "react-router-dom";
 
 function Blogs() {
   const [blogs, setBlogs] = useState([]);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:3000/blogs")
-      .then((res) => res.json())
-      .then((data) => setBlogs(data))
-      .catch((error) => console.log(error));
+    const loadBlogs = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/blogs");
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(
+            data.error || data.message || "Unable to load blogs.",
+          );
+        }
+        setBlogs(data);
+      } catch (loadError) {
+        setError(loadError.message || "Unable to connect to the server.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadBlogs();
   }, []);
 
   return (
@@ -44,7 +60,11 @@ function Blogs() {
         </div>
 
         <div className="blogs-list">
-          {blogs.length === 0 ? (
+          {loading ? (
+            <p className="empty-blogs">Loading blogs...</p>
+          ) : error ? (
+            <p className="empty-blogs">{error}</p>
+          ) : blogs.length === 0 ? (
             <p className="empty-blogs">No blogs published yet.</p>
           ) : (
             blogs.map((blog, index) => (

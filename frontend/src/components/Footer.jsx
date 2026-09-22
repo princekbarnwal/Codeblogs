@@ -10,7 +10,7 @@ function Footer() {
           </Link>
           <div className="footer-links">
             <Link to="/blogs">Dispatches</Link>
-            <Link to="/articles">Archive</Link>
+            <Link to="/articles">Articles</Link>
             <Link to="/create-blog">Write a dispatch</Link>
           </div>
         </div>

@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./Home.css";
-const excerpt = (text, n = 145) =>
-  text?.length > n ? `${text.slice(0, n).trim()}...` : text;
-const date = (value) =>
+
+const excerpt = (text, length = 145) =>
+  text?.length > length ? `${text.slice(0, length).trim()}...` : text;
+const formatDate = (value) =>
   value
     ? new Date(value).toLocaleDateString("en-US", {
         month: "short",
@@ -11,49 +12,29 @@ const date = (value) =>
         year: "numeric",
       })
     : "Recently";
+
 function Home() {
   const [blogs, setBlogs] = useState([]);
-  const [articles, setArticles] = useState([]);
   const [quote, setQuote] = useState(null);
+
   useEffect(() => {
-    Promise.all([
-      fetch("http://localhost:3000/blogs"),
-      fetch("http://localhost:3000/articles"),
-      fetch("http://localhost:3000/quotes"),
-    ])
-      .then(async ([b, a, q]) => [
-        b.ok ? await b.json() : [],
-        a.ok ? await a.json() : [],
-        q.ok ? await q.json() : null,
-      ])
-      .then(([b, a, q]) => {
+    fetch("http://localhost:3000/blogs")
+      .then(async (response) => (response.ok ? response.json() : []))
+      .then((data) =>
         setBlogs(
-          [...b].sort((x, y) => new Date(y.createdAt) - new Date(x.createdAt)),
-        );
-        setArticles(
-          [...a].sort((x, y) => new Date(y.createdAt) - new Date(x.createdAt)),
-        );
-        setQuote(q);
-      })
-      .catch(() => undefined);
+          [...data]
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+            .slice(0, 3),
+        ),
+      )
+      .catch(() => setBlogs([]));
+
+    fetch("http://localhost:3000/quotes")
+      .then(async (response) => (response.ok ? response.json() : null))
+      .then(setQuote)
+      .catch(() => setQuote(null));
   }, []);
-  const featured = articles[0] || blogs[0];
-  const latest = [
-    ...blogs.map((x) => ({
-      ...x,
-      kind: "Dispatch",
-      body: x.article,
-      url: `/blogs/${x._id}`,
-    })),
-    ...articles.map((x) => ({
-      ...x,
-      kind: x.category || "Article",
-      body: x.content,
-      url: `/articles/${x._id}`,
-    })),
-  ]
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-    .slice(0, 3);
+
   return (
     <main className="home">
       <section className="home-hero">
@@ -71,8 +52,8 @@ function Home() {
             become clearer once they are written down.
           </p>
           <div className="hero-actions">
-            <Link className="editorial-button" to="/articles">
-              Explore the archive -&gt;
+            <Link className="editorial-button" to="/blogs">
+              Explore dispatches →
             </Link>
             <Link className="secondary-button" to="/create-blog">
               Write a dispatch
@@ -82,7 +63,7 @@ function Home() {
         </div>
         <div className="hero-visual">
           <div className="editorial-card">
-            <div className="card-bar">~/Codeblogs/field-notes</div>
+            <div className="card-bar">~/CodeBlogs/field-notes</div>
             <div className="card-body card-code">
               <div>
                 <span className="code-muted">01</span> const{" "}
@@ -108,6 +89,7 @@ function Home() {
           </div>
         </div>
       </section>
+
       {quote && (
         <section className="quote-section" aria-label="Featured quote">
           <div className="quote-rule" />
@@ -118,114 +100,43 @@ function Home() {
           <div className="quote-label">A NOTE TO KEEP</div>
         </section>
       )}
-      <section className="home-section">
+
+      <section className="home-section latest-writing-section">
         <div className="section-head">
           <div>
-            <p className="eyebrow">THE JOURNAL</p>
-            <h2>Two ways of thinking out loud.</h2>
-          </div>
-          <p>
-            Personal notes and durable technical explanations, kept distinct but
-            connected by the same impulse to understand.
-          </p>
-        </div>
-        <div className="stream-grid">
-          <Link className="stream" to="/blogs">
-            <span>01 / PERSONAL DISPATCHES</span>
-            <div>
-              <h3>Blogs</h3>
-              <p>
-                Observations, experiments, mistakes, and lessons gathered while
-                making things.
-              </p>
-            </div>
-            <span>EXPLORE DISPATCHES</span>
-          </Link>
-          <Link className="stream" to="/articles">
-            <span>02 / TECHNICAL ARCHIVE</span>
-            <div>
-              <h3>Articles</h3>
-              <p>
-                Guides and deep-dives designed to make difficult ideas more
-                approachable.
-              </p>
-            </div>
-            <span>EXPLORE ARTICLES</span>
-          </Link>
-        </div>
-      </section>
-      <section className="home-section">
-        <div className="section-head">
-          <div>
-            <p className="eyebrow">FROM THE ARCHIVE</p>
-            <h2>Worth a closer read.</h2>
-          </div>
-          <Link className="text-link" to="/articles">
-            View all articles -&gt;
-          </Link>
-        </div>
-        {featured ? (
-          <Link
-            to={
-              featured.content
-                ? `/articles/${featured._id}`
-                : `/blogs/${featured._id}`
-            }
-            className="feature-grid"
-          >
-            <div className="feature-copy">
-              <p className="eyebrow">
-                {featured.category || "LATEST DISPATCH"}
-              </p>
-              <h3>{featured.title}</h3>
-              <p>{excerpt(featured.content || featured.article, 260)}</p>
-              <div className="feature-meta">
-                BY {featured.name} · {date(featured.createdAt)}
-              </div>
-            </div>
-            <div className="feature-visual">
-              <strong>01</strong>
-              <span>FEATURED READING</span>
-            </div>
-          </Link>
-        ) : (
-          <p className="empty-message">
-            The archive is waiting for its first entry.
-          </p>
-        )}
-      </section>
-      <section className="home-section">
-        <div className="section-head">
-          <div>
-            <p className="eyebrow">RECENTLY PUBLISHED</p>
-            <h2>Latest notes.</h2>
+            <p className="eyebrow">LATEST WRITING</p>
+            <h2>Latest dispatches.</h2>
           </div>
           <Link className="text-link" to="/blogs">
-            View all writing -&gt;
+            View all dispatches →
           </Link>
         </div>
         <div className="preview-grid">
-          {latest.length ? (
-            latest.map((item, index) => (
-              <Link className="preview" to={item.url} key={item._id}>
+          {blogs.length ? (
+            blogs.map((blog, index) => (
+              <Link
+                className="preview"
+                to={`/blogs/${blog._id}`}
+                key={blog._id}
+              >
                 <span className="preview-meta">
-                  0{index + 1} / {item.kind.toUpperCase()}
+                  {String(index + 1).padStart(2, "0")} &nbsp; DISPATCH ·{" "}
+                  {formatDate(blog.createdAt).toUpperCase()}
                 </span>
                 <div>
-                  <h3>{item.title}</h3>
-                  <p>{excerpt(item.body, 120)}</p>
+                  <h3>{blog.title}</h3>
+                  <p>{excerpt(blog.article, 130)}</p>
                 </div>
-                <span className="preview-meta">
-                  {date(item.createdAt)} -&gt;
-                </span>
+                <span className="preview-meta">Read dispatch →</span>
               </Link>
             ))
           ) : (
-            <p className="empty-message">No entries yet.</p>
+            <p className="empty-message">No dispatches published yet.</p>
           )}
         </div>
       </section>
     </main>
   );
 }
+
 export default Home;

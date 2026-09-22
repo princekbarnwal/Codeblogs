@@ -3,12 +3,26 @@ import { Link } from "react-router-dom";
 
 function Articles() {
   const [articles, setArticles] = useState([]);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:3000/articles")
-      .then((res) => res.json())
-      .then((data) => setArticles(data))
-      .catch((error) => console.log(error));
+    const loadArticles = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/articles");
+        const data = await response.json();
+        if (!response.ok)
+          throw new Error(
+            data.error || data.message || "Unable to load articles.",
+          );
+        setArticles(data);
+      } catch (loadError) {
+        setError(loadError.message || "Unable to connect to the server.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadArticles();
   }, []);
 
   return (
@@ -42,7 +56,11 @@ function Articles() {
         </div>
 
         <div className="articles-list">
-          {articles.length === 0 ? (
+          {loading ? (
+            <p className="empty-articles">Loading articles...</p>
+          ) : error ? (
+            <p className="empty-articles">{error}</p>
+          ) : articles.length === 0 ? (
             <p className="empty-articles">No articles published yet.</p>
           ) : (
             articles.map((article, index) => (
