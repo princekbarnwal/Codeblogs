@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><title>The Margin — Writing Studio</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;1,400&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base { html, body { margin: 0; padding: 0; } body { overscroll-behavior: none; } main > :first-child { margin-top: 0 !important; } main > :last-child { margin-bottom: 0 !important; } } ::-webkit-scrollbar { display: none; }</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-secondary": "#ffffff", "inverse-surface": "#2f312f", "surface-container-low": "#f4f4f0", "tertiary-fixed-dim": "#b3cdb7", "on-tertiary-fixed": "#092012", "secondary-fixed-dim": "#75daa8", "on-tertiary-container": "#93ad98", "inverse-primary": "#a5d0b9", "tertiary-fixed": "#cee9d3", "on-primary-container": "#86af99", "primary-fixed": "#c1ecd4", "surface-container-highest": "#e2e3df", "on-background": "#1a1c1a", "on-primary-fixed": "#002114", "primary-container": "#1b4332", "on-secondary-container": "#00734d", "surface-container-lowest": "#ffffff", "surface-container-high": "#e8e8e5", "on-secondary-fixed": "#002113", "surface-variant": "#e2e3df", "on-error": "#ffffff", "outline": "#717973", "outline-variant": "#c1c8c2", "secondary": "#006c48", "tertiary-container": "#2a4131", "error": "#ba1a1a", "on-primary-fixed-variant": "#274e3d", "surface-container": "#eeeeea", "surface": "#faf9f6", "error-container": "#ffdad6", "on-primary": "#ffffff", "tertiary": "#152b1c", "on-surface": "#1a1c1a", "primary": "#012d1d", "primary-fixed-dim": "#a5d0b9", "on-secondary-fixed-variant": "#005235", "on-tertiary": "#ffffff", "surface-tint": "#3f6653", "background": "#faf9f6", "on-surface-variant": "#414844", "surface-bright": "#faf9f6", "inverse-on-surface": "#f1f1ed", "secondary-container": "#92f7c3", "on-error-container": "#93000a", "secondary-fixed": "#92f7c3", "on-tertiary-fixed-variant": "#354c3b", "surface-dim": "#dadad7" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin-mobile": "1.25rem", "gutter": "2rem", "space-xl": "2.5rem", "margin": "3rem", "space-sm": "0.5rem", "space-lg": "1.5rem", "space-md": "1rem", "space-xs": "0.25rem", "gutter-mobile": "1rem" }, "fontFamily": { "label-lg": ["Plus Jakarta Sans"], "headline-lg": ["Newsreader"], "code-snippet": ["JetBrains Mono"], "display-lg-mobile": ["Newsreader"], "headline-lg-mobile": ["Newsreader"], "body-sm": ["Plus Jakarta Sans"], "display-lg": ["Newsreader"], "headline-md": ["Newsreader"], "label-md": ["Plus Jakarta Sans"], "body-lg": ["Plus Jakarta Sans"], "headline-sm": ["Newsreader"], "body-md": ["Plus Jakarta Sans"] }, "fontSize": { "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }], "headline-lg": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.015em", "fontWeight": "400" }], "code-snippet": ["13.5px", { "lineHeight": "22px", "fontWeight": "400" }], "display-lg-mobile": ["38px", { "lineHeight": "46px", "letterSpacing": "-0.015em", "fontWeight": "500" }], "headline-lg-mobile": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.01em", "fontWeight": "400" }], "body-sm": ["13px", { "lineHeight": "20px", "fontWeight": "400" }], "display-lg": ["56px", { "lineHeight": "64px", "letterSpacing": "-0.02em", "fontWeight": "500" }], "headline-md": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "400" }], "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "600" }], "body-lg": ["18px", { "lineHeight": "30px", "letterSpacing": "-0.005em", "fontWeight": "400" }], "headline-sm": ["22px", { "lineHeight": "30px", "fontWeight": "500" }], "body-md": ["15px", { "lineHeight": "24px", "fontWeight": "400" }] } } } }</script></head><body class="bg-background font-body-md text-on-surface antialiased min-h-screen flex flex-col justify-between selection:bg-secondary-container selection:text-on-secondary-container"><header class="fixed top-0 left-0 right-0 z-40 bg-surface/90 backdrop-blur-md shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 w-full px-gutter flex items-center justify-between"><div class="flex items-center gap-space-md"><a class="flex items-center justify-center p-space-xs rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" data-path="dashboard" href="#" title="Back to Dashboard"><span class="material-symbols-outlined text-[20px]">arrow_back</span></a><div class="flex items-center gap-space-sm"><img alt="Brand logo. - Primary color: #1b4332
+- Font: newsreader
+- Mode: light
+- Roundness: rounded-md
+" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1WrrfoRVM3n9-4gK827thV92mvyO23vO8aRLvEUYnRmXl13JQM5clTsdyYxUzAFTBAKU0NLmoqh2KInR7t7pSuJymAd8f883vvv3YYLdXwe2EsWU8xSnhggPbCmdeArLq0lG8kjeZrsjxYrto3GCzYfr8hFKnPCXrer4Gh_QrkSOQqXBFY3SOeE69IZhA8jiBprAnHFCY6pEUQNhVcL7dMAjPLjSz_owLtP7hRKFDIySqHntCcAcNfsX_ej"/><span class="font-headline-sm text-headline-sm text-primary tracking-tight font-medium">The Margin</span></div><span class="text-outline-variant font-body-sm text-body-sm select-none">/</span><nav class="flex items-center" data-active-classes="text-primary font-semibold"><a aria-current="page" class="uppercase tracking-wider transition-colors text-primary font-semibold" data-path="editor" href="#">Writing Studio</a></nav></div><div class="flex items-center gap-space-lg"><div class="hidden md:flex items-center gap-space-xs px-space-sm py-1 rounded-full bg-surface-container-low text-on-surface-variant"><span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span><span class="font-label-md text-label-md text-on-surface-variant">Saved just now</span></div><div class="flex items-center gap-space-xs"><button class="flex items-center gap-space-xs px-space-sm py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" type="button"><span class="material-symbols-outlined text-[18px]">visibility</span><span class="font-label-md text-label-md">Preview</span></button><button class="flex items-center justify-center p-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" title="Post Settings" type="button"><span class="material-symbols-outlined text-[20px]">tune</span></button></div><div class="inline-flex items-center rounded-xl bg-primary-container p-0.5 shadow-sm"><button class="px-space-md py-1.5 font-label-md text-label-md text-surface rounded-lg hover:bg-primary transition-colors" type="button">Publish...</button><button class="px-space-xs py-1.5 text-surface hover:bg-primary rounded-lg transition-colors border-l border-primary-fixed-dim/20" title="Publish options" type="button"><span class="material-symbols-outlined text-[18px]">expand_more</span></button></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-16 pb-12 bg-surface min-h-[calc(100vh-48px)]"><div class="flex flex-col w-full">
+<!-- Interactive View Switcher & Canvas Controls Bar -->
+<section class="w-full bg-surface-container-low px-gutter py-3">
+<div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-space-md">
+<!-- Left: Publishing Target & Status Route -->
+<div class="flex items-center gap-space-sm flex-wrap">
+<div class="relative inline-block text-left">
+<button class="inline-flex items-center gap-space-xs px-3 py-1.5 rounded-full bg-surface-container-lowest text-primary text-label-md font-label-lg shadow-sm hover:bg-surface-container transition-colors" id="targetDropdownBtn" type="button">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="text-on-surface-variant font-medium">Publishing to:</span>
+<span class="font-semibold text-primary" id="selectedTargetText">Articles (Flagship)</span>
+<span class="material-symbols-outlined text-[16px] text-outline">expand_more</span>
+</button>
+<div class="hidden absolute left-0 mt-1.5 w-64 rounded-xl bg-surface-container-lowest shadow-xl p-1.5 z-30" id="targetDropdownMenu">
+<button class="w-full text-left p-2 rounded-lg hover:bg-surface-container-low transition-colors flex flex-col" onclick="selectPublishTarget('Articles (Flagship)', 'Curated peer-reviewed treatises')" type="button">
+<span class="text-label-md font-label-lg text-primary">Articles (Flagship)</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant text-[11px]">Curated peer-reviewed treatises</span>
+</button>
+<button class="w-full text-left p-2 rounded-lg hover:bg-surface-container-low transition-colors flex flex-col" onclick="selectPublishTarget('Blogs (Community Dispatches)', 'Technical field notes &amp; explorations')" type="button">
+<span class="text-label-md font-label-lg text-on-surface">Blogs (Dispatches)</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant text-[11px]">Technical field notes &amp; explorations</span>
+</button>
+</div>
+</div>
+<span class="text-outline-variant font-label-md select-none">/</span>
+<span class="text-label-md font-label-md text-on-surface-variant tracking-wider uppercase">Edition Nº 48</span>
+</div>
+<!-- Center / Right: Mode Switcher & Drawer Toggle -->
+<div class="flex items-center gap-space-md">
+<!-- View Toggle Pills -->
+<div class="inline-flex p-1 rounded-full bg-surface-container">
+<button class="px-3.5 py-1 rounded-full text-label-md font-label-lg bg-surface-container-lowest text-primary shadow-sm transition-all" id="tabEdit" onclick="switchView('edit')" type="button">
+            Editor
+          </button>
+<button class="px-3.5 py-1 rounded-full text-label-md font-label-lg text-on-surface-variant hover:text-on-surface transition-all" id="tabSplit" onclick="switchView('split')" type="button">
+            Split Mode
+          </button>
+<button class="px-3.5 py-1 rounded-full text-label-md font-label-lg text-on-surface-variant hover:text-on-surface transition-all" id="tabPreview" onclick="switchView('preview')" type="button">
+            Reader Preview
+          </button>
+</div>
+<!-- Toggle Settings Drawer (Desktop & Mobile) -->
+<button class="flex items-center gap-space-xs px-3 py-1.5 rounded-lg bg-surface-container-lowest text-on-surface hover:bg-surface-container transition-colors shadow-sm" id="toggleDrawerBtn" onclick="toggleSidebar()" type="button">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+<span class="text-label-md font-label-lg hidden sm:inline">Settings</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Workspace Container (Canvas + Collapsible Drawer) -->
+<div class="w-full max-w-[1440px] mx-auto px-gutter py-space-lg flex gap-space-xl relative">
+<!-- Main Writing Well Column -->
+<div class="flex-1 min-w-0 transition-all duration-300" id="mainCanvasColumn">
+<div class="max-w-[740px] mx-auto flex flex-col gap-space-lg">
+<!-- Cover Media Module (Uploaded Preview State with interactive controls) -->
+<div class="relative group rounded-xl overflow-hidden bg-surface-container shadow-sm transition-all" id="coverPhotoCard">
+<div class="relative h-72 w-full overflow-hidden bg-surface-container-highest">
+<img class="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-[1.01]" data-alt="A vintage top-down wooden desk setting with engineering schematics of distributed systems architecture, a brass banker desk lamp casting warm golden amber light, a ceramic mug with steaming black tea, fountain pen and a classic open textbook titled Designing Data Intensive Applications. Photographed in atmospheric editorial style with soft chiaroscuro shadows and rich textures." id="coverImg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuALeqL6Ub57DPkNVD1qdlf5S2N7vCdYgepRAaa0eCkqicVmwNK6lfZVKSEbEzpO345htW_1qc9pRV2pO5X07IBmVs8ox9cxd2eWaAeCmVvnZ6N0WYltfzzwoxJbHl4vb4V8rak0L2_zGX9z38RqY0Mr1Ew3L_yjkPBRWr3qnIBbSFQs-zyRjoYH3KwlTxX3ot9_vnKiSMtYRNLu5ikeh2L6Pmw43pAngC40UonkoVqLI5CZPeGIleIofw"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 via-transparent to-black/20 opacity-80 group-hover:opacity-90 transition-opacity"></div>
+<!-- Quick Cover Action Overlay -->
+<div class="absolute top-3 right-3 flex items-center gap-1.5 opacity-90 group-hover:opacity-100 transition-opacity">
+<button class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-container-lowest/90 backdrop-blur text-primary text-label-md font-label-lg hover:bg-surface-container-lowest shadow-sm transition-colors" onclick="triggerCoverPicker()" type="button">
+<span class="material-symbols-outlined text-[15px]">photo_camera</span>
+                Change Cover
+              </button>
+<button class="inline-flex items-center justify-center p-1.5 rounded-lg bg-surface-container-lowest/90 backdrop-blur text-error hover:bg-surface-container-lowest shadow-sm transition-colors" onclick="removeCover()" title="Remove Cover" type="button">
+<span class="material-symbols-outlined text-[16px]">delete</span>
+</button>
+</div>
+<!-- In-place Image Meta Footnote -->
+<div class="absolute bottom-3 left-4 right-4 flex items-center justify-between text-surface">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-secondary-fixed">photo_library</span>
+<span class="text-label-md font-label-md tracking-wide text-surface-container-lowest/90">Fig 1.0 — Desk of the Architectural Essayist</span>
+</div>
+<span class="text-body-sm font-code-snippet text-surface-container-lowest/70 text-[11px]">2560 × 1440 · 4.2 MB</span>
+</div>
+</div>
+</div>
+<!-- Optional Empty Cover Dropzone (Hidden when cover exists, toggled via script) -->
+<div class="hidden rounded-xl p-space-xl bg-surface-container-low hover:bg-surface-container transition-all cursor-pointer text-center" id="coverUploadDropzone">
+<div class="max-w-md mx-auto flex flex-col items-center justify-center gap-space-xs text-on-surface-variant">
+<div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center text-primary mb-1">
+<span class="material-symbols-outlined text-[24px]">add_photo_alternate</span>
+</div>
+<p class="text-label-lg font-label-lg text-primary">Drag &amp; drop cover photography or browse</p>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Supports high-res PNG, JPG, or WebP up to 25MB · Recommended 16:9 ratio</p>
+<button class="mt-2 px-space-md py-1.5 rounded-xl bg-primary text-surface text-label-md font-label-lg hover:bg-primary-container transition-colors shadow-sm" type="button">
+              Upload Photography
+            </button>
+</div>
+</div>
+<!-- Primary Header Inputs (Title & Standfirst) -->
+<header class="flex flex-col gap-space-sm pt-2">
+<!-- Main Post Title Area -->
+<textarea class="w-full resize-none bg-transparent font-headline-lg text-headline-lg text-primary placeholder:text-outline-variant focus:outline-none tracking-tight leading-tight" id="postTitleInput" placeholder="Title of your dispatch or treatise..." rows="2">The Anatomy of Silent Failures in Asynchronous State Machines</textarea>
+<!-- Subtitle / Standfirst Input -->
+<textarea class="w-full resize-none bg-transparent font-headline-sm text-headline-sm italic text-on-surface-variant placeholder:text-outline-variant focus:outline-none leading-relaxed" id="postSubtitleInput" placeholder="Add a concise summary or thesis statement (optional)..." rows="2">Why distributed replication boundaries collapse in unmonitored backpressure, and how mechanical sympathy preserves consensus under partial partitions.</textarea>
+<!-- Metadata Meta-row -->
+<div class="flex items-center gap-space-md pt-2 text-label-md font-label-md text-on-surface-variant">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-secondary">history_edu</span>
+<span>Draft revised 2m ago</span>
+</span>
+<span class="text-outline-variant select-none">•</span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-secondary">spellcheck</span>
+<span>Clean typography check passed</span>
+</span>
+</div>
+</header>
+<!-- Floating / Sticky Formatting Toolbar -->
+<div class="sticky top-20 z-20 w-full py-1">
+<div class="w-full rounded-xl bg-surface-container-lowest/95 backdrop-blur shadow-md p-1.5 flex items-center justify-between gap-1 overflow-x-auto">
+<!-- Text Style Group -->
+<div class="flex items-center gap-0.5">
+<button class="w-8 h-8 flex items-center justify-center rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" title="Bold (⌘B)" type="button">
+<span class="font-bold font-body-md text-[14px]">B</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" title="Italic (⌘I)" type="button">
+<span class="italic font-headline-sm text-[16px]">I</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" title="Strike-through" type="button">
+<span class="line-through font-body-md text-[13px]">S</span>
+</button>
+</div>
+<div class="w-[1px] h-4 bg-surface-container-highest"></div>
+<!-- Headings -->
+<div class="flex items-center gap-0.5">
+<button class="px-2 h-8 flex items-center justify-center rounded-lg text-label-md font-label-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" title="Section Heading 2 (⌘2)" type="button">
+                H2
+              </button>
+<button class="px-2 h-8 flex items-center justify-center rounded-lg text-label-md font-label-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" title="Subheading 3 (⌘3)" type="button">
+                H3
+              </button>
+</div>
+<div class="w-[1px] h-4 bg-surface-container-highest"></div>
+<!-- Block Elements -->
+<div class="flex items-center gap-0.5">
+<button class="w-8 h-8 flex items-center justify-center rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" title="Editorial Pullquote" type="button">
+<span class="material-symbols-outlined text-[18px]">format_quote</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" title="Monospace Code Block (⌘E)" type="button">
+<span class="material-symbols-outlined text-[18px]">code_blocks</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" title="Hyperlink (⌘K)" type="button">
+<span class="material-symbols-outlined text-[18px]">link</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" title="Inline Technical Diagram / Image" type="button">
+<span class="material-symbols-outlined text-[18px]">image</span>
+</button>
+</div>
+<div class="w-[1px] h-4 bg-surface-container-highest"></div>
+<!-- Lists & Markdown helper -->
+<div class="flex items-center gap-0.5">
+<button class="w-8 h-8 flex items-center justify-center rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" title="Bulleted List" type="button">
+<span class="material-symbols-outlined text-[18px]">format_list_bulleted</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" title="Numbered List" type="button">
+<span class="material-symbols-outlined text-[18px]">format_list_numbered</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg text-secondary hover:bg-secondary-container/30 transition-colors" title="Toggle Markdown cheat sheet" type="button">
+<span class="font-code-snippet text-[12px] font-medium">MD</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Editable Rich Body Canvas with Pre-populated Post -->
+<article class="flex flex-col gap-space-lg text-on-surface focus:outline-none" id="editableArticleContent">
+<!-- Paragraph 1 with Classical Drop Cap -->
+<div class="relative group">
+<p class="font-body-lg text-body-lg leading-relaxed text-on-surface text-justify">
+<span class="float-left text-[68px] leading-[0.8] pr-3 pt-1 font-headline-lg text-primary font-medium select-none">W</span>hen we contemplate failure domains within distributed software architecture, we reflexively prepare for catastrophic fractures: network partitions that cut datacenters clean in half, unexpected kernel panics, and hard drive corruption. Yet the most pernicious breakdowns rarely present with sirens. Instead, they materialize in quiet backchannels—a buffer queue leaking three frames per hour, a tick timer slowly drifting out of causal synchrony, or an unmonitored backpressure valve steadily exhausting OS file descriptors.
+            </p>
+</div>
+<!-- Editorial Heading 2 -->
+<div class="pt-space-md">
+<h2 class="font-headline-md text-headline-md text-primary tracking-tight font-medium">The Illusion of Linear Causality</h2>
+<div class="h-0.5 w-12 bg-secondary/40 mt-1.5"></div>
+</div>
+<!-- Paragraph 2 -->
+<p class="font-body-lg text-body-lg leading-relaxed text-on-surface">
+            Modern high-throughput engines rely on optimistic concurrency controls and non-blocking actor primitives. In such asynchronous domains, linear causality is an engineered illusion. When an individual node fails to process heartbeats due to sudden garbage collector pauses, the surrounding quorum re-elects a leader within milliseconds. However, if the stalled node revives without strict generational fencing, it will commit stale state mutations directly into the log replica.
+          </p>
+<!-- Syntax-Highlighted Rust Code Inset Block -->
+<div class="rounded-xl overflow-hidden bg-surface-container-highest shadow-sm">
+<!-- Code Block Header -->
+<div class="px-space-md py-2 bg-surface-container flex items-center justify-between text-on-surface-variant">
+<div class="flex items-center gap-2 font-code-snippet text-code-snippet text-[12px]">
+<span class="w-2.5 h-2.5 rounded-full bg-error/70 inline-block"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-secondary-fixed inline-block"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-tertiary-fixed-dim inline-block"></span>
+<span class="ml-2 font-medium text-on-surface">consensus/fencing_token.rs</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="px-2 py-0.5 rounded text-[11px] font-code-snippet bg-surface-container-highest text-primary uppercase tracking-wider font-semibold">Rust</span>
+<button class="p-1 text-on-surface-variant hover:text-primary transition-colors" title="Copy snippet" type="button">
+<span class="material-symbols-outlined text-[16px]">content_copy</span>
+</button>
+</div>
+</div>
+<!-- Code Body -->
+<pre class="p-space-lg font-code-snippet text-code-snippet overflow-x-auto text-on-surface leading-relaxed text-[13px] bg-surface-container-low"><code><span class="text-secondary font-medium">pub async fn</span> <span class="text-primary font-semibold">replicate_log_entry</span>&lt;T: <span class="text-tertiary-fixed-variant">Serialize</span>&gt;(
+    &amp;<span class="text-secondary">self</span>,
+    term: <span class="text-primary-container font-medium">EpochTerm</span>,
+    payload: &amp;T,
+    fence: <span class="text-primary-container font-medium">GenerationGuard</span>
+) -&gt; <span class="text-secondary font-medium">Result</span>&lt;<span class="text-primary-container font-medium">CommitAck</span>, <span class="text-error font-medium">ConsensusError</span>&gt; {
+    <span class="text-outline italic">// Reject zombies with expired epoch tokens prior to I/O dispatch</span>
+    <span class="text-secondary font-medium">if</span> fence.epoch() &lt; <span class="text-secondary">self</span>.current_epoch.load(<span class="text-tertiary-fixed-variant">Ordering::Acquire</span>) {
+        <span class="text-secondary font-medium">return</span> <span class="text-secondary font-medium">Err</span>(<span class="text-error font-medium">ConsensusError::StaleLeaderGeneration</span>);
+    }
+
+    <span class="text-outline italic">// Acquire exclusive memory barrier before WAL write</span>
+    <span class="text-secondary font-medium">let</span> _lock = <span class="text-secondary">self</span>.wal_barrier.lock().<span class="text-secondary font-medium">await</span>;
+    <span class="text-secondary">self</span>.wal.append(term, payload).<span class="text-secondary font-medium">await</span>?;
+    
+    <span class="text-secondary font-medium">Ok</span>(<span class="text-primary-container font-medium">CommitAck::Committed</span>(fence.epoch()))
+}</code></pre>
+</div>
+<!-- Editorial Pullquote Inset -->
+<figure class="my-space-md p-space-lg rounded-xl bg-surface-container-low shadow-sm relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-primary"></div>
+<blockquote class="font-headline-md text-headline-md italic text-primary leading-snug">
+              “Software architecture is not the art of building unbreakable systems; it is the discipline of making failure modes self-evident and reversible.”
+            </blockquote>
+<figcaption class="mt-space-md flex items-center gap-space-sm font-label-md text-label-md text-on-surface-variant">
+<span class="font-semibold text-primary">Dr. Alistair Vance</span>
+<span class="text-outline-variant select-none">•</span>
+<span>Principles of Resilient Topology (1998)</span>
+</figcaption>
+</figure>
+<!-- Technical Paragraph 3 -->
+<p class="font-body-lg text-body-lg leading-relaxed text-on-surface">
+            To remedy this fragility, the modern distributed practitioner must introduce mechanical sympathy into every tier of the protocol stack. Memory fences must be bound directly to consensus tokens, preventing rogue CPU threads from writing past expired lease intervals. By coupling strict physical invariants with unambiguous logging invariants, we banish the phantom state machine anomalies that plague late-night on-call rotations.
+          </p>
+<!-- Inline Technical SVG Diagram: Distributed Consensus Topology -->
+<div class="my-space-md p-space-lg rounded-xl bg-surface-container-low shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md uppercase tracking-wider text-primary font-semibold flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-secondary">hub</span>
+                Topology Schematic: Dual Quorum Ring with Generational Fencing
+              </span>
+<span class="text-body-sm font-code-snippet text-on-surface-variant text-[12px]">SVG Vector Model</span>
+</div>
+<div class="w-full py-4 flex items-center justify-center">
+<svg class="w-full h-auto max-w-[620px] text-primary" fill="none" viewbox="0 0 680 180" xmlns="http://www.w3.org/2000/svg">
+<!-- Outer Flow Background Paths -->
+<path class="opacity-30" d="M 120 90 L 260 90 M 340 90 L 480 90" stroke="currentColor" stroke-dasharray="4 4" stroke-width="2"></path>
+<path class="opacity-30" d="M 300 45 L 300 135" stroke="currentColor" stroke-dasharray="4 4" stroke-width="2"></path>
+<!-- Node 1: Leader -->
+<g class="transition-transform hover:scale-105 transform-origin-center">
+<rect fill="#1b4332" height="70" rx="10" width="100" x="20" y="55"></rect>
+<text fill="#faf9f6" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="600" text-anchor="middle" x="70" y="88">PRIMARY</text>
+<text fill="#75daa8" font-family="'JetBrains Mono', monospace" font-size="10" text-anchor="middle" x="70" y="106">Epoch #142</text>
+</g>
+<!-- Arrow 1 to Fencing Gate -->
+<path d="M 125 90 L 175 90" marker-end="url(#arrow)" stroke="#006c48" stroke-width="2.5"></path>
+<!-- Fencing Token Module -->
+<g>
+<polygon fill="#e8e8e5" points="215,60 265,90 215,120 165,90" stroke="#006c48" stroke-width="2"></polygon>
+<text fill="#012d1d" font-family="'Newsreader', serif" font-size="11" font-weight="600" text-anchor="middle" x="215" y="87">GENERATION</text>
+<text fill="#006c48" font-family="'JetBrains Mono', monospace" font-size="9" text-anchor="middle" x="215" y="100">FENCE</text>
+</g>
+<!-- Arrow 2 to Consensus Engine -->
+<path d="M 270 90 L 320 90" stroke="#006c48" stroke-width="2.5"></path>
+<!-- Node 2: Consensus Core -->
+<g>
+<circle cx="370" cy="90" fill="#faf9f6" r="42" stroke="#1b4332" stroke-width="3"></circle>
+<text fill="#1b4332" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="700" text-anchor="middle" x="370" y="86">RAFT</text>
+<text fill="#414844" font-family="'Plus Jakarta Sans', sans-serif" font-size="10" text-anchor="middle" x="370" y="102">QUORUM</text>
+</g>
+<!-- Arrow 3 to Replica Nodes -->
+<path d="M 415 75 L 485 50" stroke="#006c48" stroke-width="2"></path>
+<path d="M 415 105 L 485 130" stroke="#006c48" stroke-width="2"></path>
+<!-- Node 3A: Follower A -->
+<g>
+<rect fill="#faf9f6" height="50" rx="8" stroke="#c1c8c2" stroke-width="1.5" width="130" x="490" y="25"></rect>
+<text fill="#1a1c1a" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="600" text-anchor="middle" x="555" y="47">Replica A (Disk WAL)</text>
+<text fill="#006c48" font-family="'JetBrains Mono', monospace" font-size="9" text-anchor="middle" x="555" y="63">Sync ack: +1.2ms</text>
+</g>
+<!-- Node 3B: Follower B -->
+<g>
+<rect fill="#faf9f6" height="50" rx="8" stroke="#c1c8c2" stroke-width="1.5" width="130" x="490" y="105"></rect>
+<text fill="#1a1c1a" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="600" text-anchor="middle" x="555" y="127">Replica B (Memory Ring)</text>
+<text fill="#006c48" font-family="'JetBrains Mono', monospace" font-size="9" text-anchor="middle" x="555" y="143">Sync ack: +0.4ms</text>
+</g>
+<defs>
+<marker id="arrow" markerheight="6" markerwidth="6" orient="auto-start-reverse" refx="5" refy="5" viewbox="0 0 10 10">
+<path d="M 0 0 L 10 5 L 0 10 z" fill="#006c48"></path>
+</marker>
+</defs>
+</svg>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant italic text-center">
+              Diagram 1.1: Rejection of split-brain leaders using atomic generation validation tokens before log append.
+            </p>
+</div>
+<!-- Continuation prompt line -->
+<div class="py-space-md flex items-center gap-space-sm text-on-surface-variant opacity-70 hover:opacity-100 transition-opacity cursor-text">
+<span class="material-symbols-outlined text-[20px] text-secondary">edit_note</span>
+<span class="font-body-lg text-body-lg italic">Type '/' to insert tables, footnotes, mathematical formulas, or callouts...</span>
+</div>
+</article>
+<!-- Taxonomy & Topic Tag Composer Area -->
+<section class="mt-space-lg pt-space-lg bg-surface-container-low rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-secondary">label</span>
+<h3 class="font-label-lg text-label-lg text-primary uppercase tracking-wider">Classification &amp; Topic Indexing</h3>
+</div>
+<span class="text-body-sm font-body-sm text-on-surface-variant text-[12px]">4 applied · Max 6</span>
+</div>
+<!-- Interactive Chips Container -->
+<div class="flex flex-wrap items-center gap-2" id="tagsList">
+<!-- Chip 1 -->
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container text-label-md font-label-lg shadow-sm">
+<span>Distributed Systems</span>
+<button class="hover:opacity-75 transition-opacity" onclick="this.parentElement.remove()" title="Remove tag" type="button">
+<span class="material-symbols-outlined text-[14px]">close</span>
+</button>
+</span>
+<!-- Chip 2 -->
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container text-label-md font-label-lg shadow-sm">
+<span>Rust &amp; Memory</span>
+<button class="hover:opacity-75 transition-opacity" onclick="this.parentElement.remove()" title="Remove tag" type="button">
+<span class="material-symbols-outlined text-[14px]">close</span>
+</button>
+</span>
+<!-- Chip 3 -->
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container text-label-md font-label-lg shadow-sm">
+<span>Consensus</span>
+<button class="hover:opacity-75 transition-opacity" onclick="this.parentElement.remove()" title="Remove tag" type="button">
+<span class="material-symbols-outlined text-[14px]">close</span>
+</button>
+</span>
+<!-- Chip 4 -->
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-highest text-on-surface-variant text-label-md font-label-lg">
+<span>Architecture</span>
+<button class="hover:opacity-75 transition-opacity" onclick="this.parentElement.remove()" title="Remove tag" type="button">
+<span class="material-symbols-outlined text-[14px]">close</span>
+</button>
+</span>
+<!-- Tag Input Field -->
+<div class="inline-flex items-center">
+<input class="bg-surface-container-lowest px-3 py-1 rounded-full text-label-md font-label-md text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-secondary/40 shadow-sm" id="newTagInput" onkeydown="handleTagKeydown(event)" placeholder="+ Add topic tag... (Enter)" type="text"/>
+</div>
+</div>
+</section>
+</div>
+</div>
+<!-- Right-Hand Collapsible Post Settings Drawer (320px Standard) -->
+<aside class="w-80 shrink-0 flex flex-col gap-space-md transition-all duration-300" id="settingsDrawer">
+<!-- Drawer Header -->
+<div class="flex items-center justify-between pb-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-primary">article</span>
+<h2 class="font-headline-sm text-headline-sm text-primary font-medium">Post Settings</h2>
+</div>
+<button class="p-1 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" onclick="toggleSidebar()" title="Hide Settings Drawer" type="button">
+<span class="material-symbols-outlined text-[18px]">dock_to_right</span>
+</button>
+</div>
+<!-- Publication Workflow / Status Card -->
+<div class="p-space-md rounded-xl bg-surface-container-low shadow-sm flex flex-col gap-space-sm">
+<label class="text-label-md font-label-lg text-primary uppercase tracking-wider">Publishing Status</label>
+<div class="flex flex-col gap-2 pt-1">
+<!-- Draft Option -->
+<label class="flex items-start gap-space-xs p-2 rounded-lg bg-surface-container-lowest cursor-pointer transition-colors hover:bg-surface-container">
+<input checked="" class="mt-1 text-primary focus:ring-secondary" name="publishStatus" type="radio" value="draft"/>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-primary">Active Draft</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant text-[11px]">Private to you &amp; designated co-authors</span>
+</div>
+</label>
+<!-- Scheduled Option -->
+<label class="flex items-start gap-space-xs p-2 rounded-lg bg-surface-container-lowest cursor-pointer transition-colors hover:bg-surface-container">
+<input class="mt-1 text-primary focus:ring-secondary" name="publishStatus" type="radio" value="scheduled"/>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-on-surface">Scheduled Dispatch</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant text-[11px]">Deploy on scheduled editorial date</span>
+</div>
+</label>
+<!-- Immediate Public -->
+<label class="flex items-start gap-space-xs p-2 rounded-lg bg-surface-container-lowest cursor-pointer transition-colors hover:bg-surface-container">
+<input class="mt-1 text-primary focus:ring-secondary" name="publishStatus" type="radio" value="public"/>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-on-surface">Public Instant</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant text-[11px]">Broadcast to RSS &amp; RSS Feed reader</span>
+</div>
+</label>
+</div>
+</div>
+<!-- Section Routing & Hierarchy -->
+<div class="p-space-md rounded-xl bg-surface-container-low shadow-sm flex flex-col gap-space-sm">
+<label class="text-label-md font-label-lg text-primary uppercase tracking-wider">Editorial Route</label>
+<select class="w-full p-2.5 rounded-lg bg-surface-container-lowest text-on-surface text-label-md font-label-md shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary/40">
+<option>Articles / Systems Architecture</option>
+<option>Articles / Distributed Databases</option>
+<option>Dispatches / Field Notes</option>
+<option>Case Studies / Postmortems</option>
+</select>
+</div>
+<!-- Slug & Permalinks -->
+<div class="p-space-md rounded-xl bg-surface-container-low shadow-sm flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<label class="text-label-md font-label-lg text-primary uppercase tracking-wider">Slug &amp; Canonical URL</label>
+<button class="text-secondary text-label-md font-label-lg hover:underline" type="button">Edit</button>
+</div>
+<div class="p-2 rounded-lg bg-surface-container-lowest font-code-snippet text-[12px] text-on-surface-variant break-all shadow-sm">
+          themargin.dev/articles/<span class="text-primary font-semibold">silent-failures-distributed-state</span>
+</div>
+</div>
+<!-- Cover Media Accessibility & SEO -->
+<div class="p-space-md rounded-xl bg-surface-container-low shadow-sm flex flex-col gap-space-sm">
+<label class="text-label-md font-label-lg text-primary uppercase tracking-wider">Cover Image Alt Text (SEO)</label>
+<textarea class="w-full p-2 rounded-lg bg-surface-container-lowest text-on-surface font-body-sm text-body-sm shadow-sm placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-secondary/40 resize-none" rows="3">Drafting desk with distributed system microservices schematics under a warm reading lamp.</textarea>
+<p class="font-body-sm text-body-sm text-on-surface-variant text-[11px]">Screen readers and search indexes rely on descriptive, thoughtful alt copy.</p>
+</div>
+<!-- Reading Metrics & Metadata Summary -->
+<div class="p-space-md rounded-xl bg-surface-container-low shadow-sm flex flex-col gap-space-sm">
+<label class="text-label-md font-label-lg text-primary uppercase tracking-wider">Estimated Read Velocity</label>
+<div class="grid grid-cols-2 gap-2">
+<div class="p-2.5 rounded-lg bg-surface-container-lowest flex flex-col">
+<span class="font-headline-sm text-headline-sm text-primary font-medium">1,420</span>
+<span class="font-label-md text-label-md text-on-surface-variant">Total Words</span>
+</div>
+<div class="p-2.5 rounded-lg bg-surface-container-lowest flex flex-col">
+<span class="font-headline-sm text-headline-sm text-primary font-medium">6.2</span>
+<span class="font-label-md text-label-md text-on-surface-variant">Min. Read Time</span>
+</div>
+</div>
+</div>
+<!-- Peer Review & Discussion Permissions -->
+<div class="p-space-md rounded-xl bg-surface-container-low shadow-sm flex flex-col gap-space-sm">
+<label class="text-label-md font-label-lg text-primary uppercase tracking-wider">Discussion Controls</label>
+<div class="flex items-center justify-between py-1">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-on-surface">Curated Peer Annotations</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant text-[11px]">Verified accounts can annotate margins</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-9 h-5 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-surface after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="flex items-center justify-between py-1">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-on-surface">Index in Google Scholar</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant text-[11px]">Emit Dublin Core citation meta tags</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-9 h-5 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-surface after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+<!-- Danger Zone / Discard -->
+<div class="p-space-sm flex items-center justify-between">
+<button class="text-error font-label-md text-label-md flex items-center gap-1 hover:underline" type="button">
+<span class="material-symbols-outlined text-[16px]">archive</span>
+          Archive Draft
+        </button>
+<span class="text-body-sm font-body-sm text-on-surface-variant text-[11px]">Saved locally</span>
+</div>
+</aside>
+</div>
+</div>
+<script>
+  // Target switcher dropdown toggle
+  const targetBtn = document.getElementById('targetDropdownBtn');
+  const targetMenu = document.getElementById('targetDropdownMenu');
+  const selectedTargetText = document.getElementById('selectedTargetText');
+
+  if (targetBtn && targetMenu) {
+    targetBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      targetMenu.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', () => {
+      if (!targetMenu.classList.contains('hidden')) {
+        targetMenu.classList.add('hidden');
+      }
+    });
+  }
+
+  function selectPublishTarget(title, desc) {
+    if (selectedTargetText) {
+      selectedTargetText.textContent = title;
+    }
+    if (targetMenu) {
+      targetMenu.classList.add('hidden');
+    }
+  }
+
+  // Cover image management
+  function removeCover() {
+    const card = document.getElementById('coverPhotoCard');
+    const dropzone = document.getElementById('coverUploadDropzone');
+    if (card && dropzone) {
+      card.classList.add('hidden');
+      dropzone.classList.remove('hidden');
+    }
+  }
+
+  function triggerCoverPicker() {
+    const card = document.getElementById('coverPhotoCard');
+    const dropzone = document.getElementById('coverUploadDropzone');
+    if (card && dropzone) {
+      card.classList.remove('hidden');
+      dropzone.classList.add('hidden');
+    }
+  }
+
+  // Collapsible sidebar logic
+  let sidebarOpen = true;
+  function toggleSidebar() {
+    const drawer = document.getElementById('settingsDrawer');
+    if (!drawer) return;
+    sidebarOpen = !sidebarOpen;
+    if (sidebarOpen) {
+      drawer.classList.remove('hidden');
+    } else {
+      drawer.classList.add('hidden');
+    }
+  }
+
+  // Dynamic Tag Handling
+  function handleTagKeydown(e) {
+    if (e.key === 'Enter' && e.target.value.trim() !== '') {
+      e.preventDefault();
+      const val = e.target.value.trim();
+      const tagsList = document.getElementById('tagsList');
+      const inputWrap = e.target.parentElement;
+      
+      const newTag = document.createElement('span');
+      newTag.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container text-label-md font-label-lg shadow-sm';
+      newTag.innerHTML = `<span>${val}</span><button type="button" onclick="this.parentElement.remove()" class="hover:opacity-75 transition-opacity" title="Remove tag"><span class="material-symbols-outlined text-[14px]">close</span></button>`;
+      
+      tagsList.insertBefore(newTag, inputWrap);
+      e.target.value = '';
+    }
+  }
+
+  // View Switcher (Editor / Split / Preview)
+  function switchView(mode) {
+    const tabEdit = document.getElementById('tabEdit');
+    const tabSplit = document.getElementById('tabSplit');
+    const tabPreview = document.getElementById('tabPreview');
+    const canvasCol = document.getElementById('mainCanvasColumn');
+
+    const defaultBtnClasses = "px-3.5 py-1 rounded-full text-label-md font-label-lg text-on-surface-variant hover:text-on-surface transition-all";
+    const activeBtnClasses = "px-3.5 py-1 rounded-full text-label-md font-label-lg bg-surface-container-lowest text-primary shadow-sm transition-all";
+
+    if (tabEdit && tabSplit && tabPreview) {
+      tabEdit.className = defaultBtnClasses;
+      tabSplit.className = defaultBtnClasses;
+      tabPreview.className = defaultBtnClasses;
+    }
+
+    if (mode === 'edit' && tabEdit) {
+      tabEdit.className = activeBtnClasses;
+      if (canvasCol) canvasCol.classList.remove('opacity-90');
+    } else if (mode === 'split' && tabSplit) {
+      tabSplit.className = activeBtnClasses;
+    } else if (mode === 'preview' && tabPreview) {
+      tabPreview.className = activeBtnClasses;
+    }
+  }
+</script></main><footer class="fixed bottom-0 left-0 right-0 z-30 h-10 bg-surface-container-low/95 backdrop-blur-sm shadow-[0_-1px_6px_rgba(0,0,0,0.03)]"><div class="h-full w-full px-gutter flex items-center justify-between font-label-md text-label-md text-on-surface-variant"><div class="flex items-center gap-space-lg"><span><strong class="font-semibold text-on-surface">0</strong> words</span><span class="text-outline-variant select-none">•</span><span><strong class="font-semibold text-on-surface">0</strong> min read</span><span class="text-outline-variant select-none">•</span><span class="text-secondary font-medium">Markdown Enabled</span></div><div class="hidden md:flex items-center gap-space-md font-code-snippet text-code-snippet"><span class="text-on-surface-variant"><kbd class="px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface text-[11px]">⌘B</kbd> Bold</span><span class="text-on-surface-variant"><kbd class="px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface text-[11px]">⌘I</kbd> Italic</span><span class="text-on-surface-variant"><kbd class="px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface text-[11px]">⌘K</kbd> Link</span><span class="text-on-surface-variant"><kbd class="px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface text-[11px]">#</kbd> Heading</span></div></div></footer></body></html>

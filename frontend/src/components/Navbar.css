@@ -1,0 +1,91 @@
+.site-nav {
+  height: 65px;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--surface) 90%, transparent);
+  backdrop-filter: blur(16px);
+}
+
+.nav-content {
+  width: min(1280px, calc(100% - 48px));
+  height: 100%;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+}
+
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  color: var(--primary);
+}
+
+.brand-name {
+  font:
+    500 25px/1 "Newsreader",
+    serif;
+  letter-spacing: -0.04em;
+}
+
+.brand-subtitle {
+  color: var(--muted);
+  font:
+    500 9px/1 "JetBrains Mono",
+    monospace;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nav-links a {
+  border-radius: 7px;
+  color: var(--muted);
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  background: var(--primary);
+  color: var(--surface);
+}
+
+.theme-toggle {
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 17px;
+}
+
+.theme-toggle:hover {
+  background: var(--paper-soft);
+}
+
+@media (max-width: 700px) {
+  .nav-content {
+    width: calc(100% - 32px);
+  }
+
+  .brand-subtitle {
+    display: none;
+  }
+
+  .nav-links a {
+    padding: 7px 8px;
+  }
+}
