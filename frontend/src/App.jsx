@@ -10,6 +10,8 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import Profile from "./pages/Profile";
+import MyBlogs from "./pages/MyBlogs";
 function App() {
   return (
     <BrowserRouter>
@@ -24,6 +26,8 @@ function App() {
         <Route path="/create-blog" element={<CreateBlog />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/users/:username" element={<Profile />} />
+        <Route path="/my-blogs" element={<MyBlogs />} />
       </Routes>
       <Footer />
     </BrowserRouter>

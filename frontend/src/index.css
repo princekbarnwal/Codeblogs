@@ -662,3 +662,142 @@ body.dark {
     align-items: stretch;
   }
 }
+/* Profile */
+
+.profile-page {
+  width: min(900px, calc(100% - 48px));
+  min-height: calc(100vh - 65px);
+  margin: auto;
+  padding: 80px 0 110px;
+}
+
+.profile-header {
+  padding-bottom: 34px;
+  border-bottom: 1px solid var(--line);
+}
+
+.profile-header h1 {
+  margin: 0;
+  color: var(--primary);
+  font:
+    500 clamp(42px, 6vw, 64px)/1 "Newsreader",
+    serif;
+  letter-spacing: -0.05em;
+}
+
+.profile-username {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font:
+    500 12px "JetBrains Mono",
+    monospace;
+}
+
+.profile-stats {
+  margin-top: 28px;
+  color: var(--primary);
+  font-size: 13px;
+}
+
+.profile-stats strong {
+  font-size: 20px;
+}
+
+.latest-profile-blog {
+  padding: 42px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.latest-profile-blog h2 {
+  max-width: 720px;
+  margin: 13px 0 10px;
+  color: var(--primary);
+  font:
+    500 clamp(28px, 4vw, 40px)/1.1 "Newsreader",
+    serif;
+  letter-spacing: -0.035em;
+}
+
+.latest-profile-blog p:not(.section-label) {
+  max-width: 680px;
+  margin: 0 0 18px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.75;
+}
+
+.profile-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 28px;
+}
+
+.profile-action-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 15px;
+  border: 1px solid var(--primary);
+  border-radius: 7px;
+  background: var(--primary);
+  color: var(--surface);
+  font-size: 12px;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.profile-action-link:hover {
+  background: var(--green);
+  border-color: var(--green);
+  transform: translateY(-1px);
+}
+
+.profile-logout {
+  min-height: 40px;
+  padding: 0 15px;
+  border: 1px solid #cf7777;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--error);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.profile-logout:hover {
+  background: color-mix(in srgb, var(--error) 7%, transparent);
+}
+
+@media (max-width: 700px) {
+
+  .profile-page {
+    width: calc(100% - 32px);
+    padding: 55px 0 80px;
+  }
+
+  .profile-header h1 {
+    font-size: 44px;
+  }
+
+  .latest-profile-blog {
+    padding: 32px 0;
+  }
+
+  .latest-profile-blog h2 {
+    font-size: 30px;
+  }
+
+  .profile-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .profile-action-link,
+  .profile-logout {
+    width: 100%;
+  }
+
+}

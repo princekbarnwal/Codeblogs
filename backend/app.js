@@ -4,9 +4,9 @@ import blogs from "./blogs.js";
 import articles from "./articles.js";
 import quotes from "./quotes.js";
 import cors from "cors";
-import bcrypt from "bcrypt";
 import router from "./auth.js";
 import verifytoken from "./middleware.js";
+import users from "./users.js";
 
 const app=express();
 
@@ -29,6 +29,51 @@ await connectdb();
 app.get('/quotes', (req,res)=>{
     const quote= quotes[Math.floor(Math.random() * quotes.length)];
     res.json(quote);
+});
+
+app.get('/users/:username' , async (req, res)=>{
+    try {
+        const user = await users.findOne({
+            username : req.params.username
+        });
+        if(!user){
+            return res.status(404).json({message:"User not found"})
+        }
+        else{
+            const blogcount = await blogs.countDocuments({
+                author: user._id
+            })
+            const latestblog = await blogs.findOne({author : user._id})
+            .sort({ createdAt : -1})
+            .select(" title article createdAt");
+
+            return res.status(200).json({
+                username : user.username,
+                name : user.name,
+                blogCount : blogcount,
+                joinedAt : user.createdAt,
+                latestBlog : latestblog
+            })
+        }
+    } 
+    catch (error) {
+        res.status(500).json({error:"Server Unavailable"});
+    }
+});
+
+app.get('/blogs/me' , verifytoken, async (req, res)=>{
+    try {
+        const myblogs = await blogs.find({author: req.user.userid})
+        .sort({createdAt: -1});
+
+        return res.status(200).json(myblogs)
+    } 
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message: "Server unavailable"
+        })
+    }
 });
 
 app.get('/blogs',async (req,res)=>{

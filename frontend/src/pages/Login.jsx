@@ -32,6 +32,7 @@ function Login() {
       }
 
       saveTokens(data);
+      window.dispatchEvent(new Event("authChanged"));
       navigate("/");
     } catch {
       setError("Unable to connect to the server.");
