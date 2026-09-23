@@ -60,12 +60,12 @@ app.get('/blogs/:id',async (req,res)=>{
 app.post('/blogs', verifytoken , async (req,res)=>{
     const title=req.body.title;
     const article=req.body.article;
-    const name=req.body.name;
+    const author=req.user.userid;
     try {
         const newBlog = await blogs.create({
             title: title,
             article: article,
-            name: name
+            author: author
         });
         res.status(201).json(newBlog);
     } 
@@ -80,10 +80,15 @@ app.delete('/blogs/:id',  verifytoken , async(req,res)=>{
     try {
         const blog = await blogs.findById(id);
         if(!blog)
-            res.status(404).json("Blog not found");
+            return res.status(404).json("Blog not found");
         else{
-            await blogs.findByIdAndDelete(id);
-            res.json({message: "Blog Deleted Successfully"});
+            if(blog.author.toString()===req.user.userid.toString()){
+                await blogs.findByIdAndDelete(id);
+                res.json({message: "Blog Deleted Successfully"});
+            }
+            else{
+                return res.status(403).json({message:"You can only delete your blog"});
+            }
         }
     } catch (error) {
         res.status(500).json({error:"Server Unavailable"});
