@@ -1,148 +1,469 @@
+/* =========================================================
+   MAC-STYLE BOTTOM DOCK
+   ========================================================= */
+
 .site-nav {
-  height: 65px;
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  border-bottom: 1px solid var(--line);
-  background: color-mix(in srgb, var(--surface) 90%, transparent);
-  backdrop-filter: blur(16px);
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+
+  transform: translateX(-50%);
+
+  z-index: 1000;
+
+  width: auto;
+  height: auto;
+
+  border: 1px solid var(--line);
+  border-radius: 22px;
+
+  background: var(--paper);
+
+  box-shadow:
+    0 12px 35px rgba(0, 0, 0, 0.12);
 }
+
+
+/* =========================================================
+   DOCK CONTAINER
+   ========================================================= */
+
 .nav-content {
-  width: min(1280px, calc(100% - 48px));
-  height: 100%;
-  margin: auto;
+  width: auto;
+  height: auto;
+  margin: 0;
+
+  padding: 8px;
+
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 24px;
+  justify-content: center;
 }
+
+
+/* =========================================================
+   HIDE OLD BRAND
+   ========================================================= */
+
 .brand {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  color: var(--primary);
+  display: none;
 }
-.brand-name {
-  font:
-    500 25px/1 "Newsreader",
-    serif;
-  letter-spacing: -0.04em;
+
+
+/* =========================================================
+   HIDE OLD MOBILE MENU
+   ========================================================= */
+
+.menu-toggle {
+  display: none;
 }
-.brand-subtitle {
-  color: var(--muted);
-  font:
-    500 9px/1 "JetBrains Mono",
-    monospace;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
+
+
+/* =========================================================
+   DOCK ITEMS CONTAINER
+   ========================================================= */
+
 .nav-links {
   display: flex;
-  align-items: center;
-  gap: 6px;
+  align-items: flex-end;
+  justify-content: center;
+
+  gap: 5px;
 }
-.nav-links a,
-.nav-logout,
-.theme-toggle {
-  min-height: 34px;
-  border: 0;
-  border-radius: 7px;
-  padding: 0 12px;
-  color: var(--muted);
-  background: transparent;
-  font:
-    600 12px "Plus Jakarta Sans",
-    sans-serif;
-  cursor: pointer;
-}
-.nav-links a {
+
+
+/* =========================================================
+   DOCK ITEM
+   ========================================================= */
+
+.dock-item {
+  position: relative;
+
+  width: 100px;
+  height: 68px;
+
+  flex-shrink: 0;
+
   display: inline-flex;
   align-items: center;
-}
-.nav-links > a:not(.nav-register):not(.nav-write):hover,
-.nav-links > a.active:not(.nav-register):not(.nav-write),
-.nav-login:hover,
-.nav-logout:hover,
-.theme-toggle:hover {
-  background: var(--paper-soft);
-  color: var(--primary);
-}
-.nav-register,
-.nav-write {
-  border: 1px solid var(--primary) !important;
-  background: var(--primary) !important;
-  color: var(--surface) !important;
-}
-.nav-register:hover,
-.nav-write:hover {
-  background: var(--green) !important;
-  border-color: var(--green) !important;
-}
-.theme-toggle,
-.menu-toggle {
-  width: 34px;
+  justify-content: center;
+
   padding: 0;
-  display: inline-grid;
-  place-items: center;
+
+  border: 0;
+  border-radius: 16px;
+
+  color: var(--muted);
+  background: transparent;
+
+  cursor: pointer;
+  text-decoration: none;
+
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease,
+    background 0.2s ease;
 }
-.theme-toggle svg,
-.menu-toggle svg {
-  width: 17px;
-  height: 17px;
-  fill: none;
-  stroke: currentColor;
+
+
+/* =========================================================
+   DOCK ICON
+   ========================================================= */
+
+.dock-item svg {
+  width: 35px;
+  height: 35px;
+
+  fill: none !important;
+  stroke: currentColor !important;
+
   stroke-width: 1.7;
   stroke-linecap: round;
   stroke-linejoin: round;
+
+  pointer-events: none;
+
+  transition:
+    transform 0.2s ease,
+    stroke-width 0.2s ease;
 }
-.menu-toggle {
-  display: none;
-  border: 0;
-  border-radius: 6px;
+
+
+/* =========================================================
+   HOVER
+   ========================================================= */
+
+.dock-item:hover {
   color: var(--primary);
-  background: transparent;
+  transform: translateY(-6px);
 }
-@media (max-width: 780px) {
-  .nav-content {
-    width: calc(100% - 32px);
+
+
+/* =========================================================
+   ACTIVE PAGE
+   ========================================================= */
+
+.dock-item.active {
+  color: var(--primary);
+  background: var(--paper-soft);
+}
+
+
+/* =========================================================
+   THEME BUTTON
+   ========================================================= */
+
+.theme-toggle {
+  position: relative;
+
+  width: 100px;
+  height: 68px;
+
+  min-width: 100px;
+  min-height: 68px;
+
+  flex-shrink: 0;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: 0;
+  border-radius: 16px;
+
+  color: var(--muted);
+  background: transparent;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease,
+    background 0.2s ease;
+}
+
+
+.theme-toggle:hover {
+  color: var(--primary);
+  transform: translateY(-6px);
+}
+
+
+.theme-toggle svg {
+  width: 35px;
+  height: 35px;
+
+  fill: none !important;
+  stroke: currentColor !important;
+
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   TOOLTIP
+   ========================================================= */
+
+.dock-tooltip {
+  position: absolute;
+
+  left: 50%;
+  bottom: calc(100% + 10px);
+
+  transform: translateX(-50%) translateY(4px);
+
+  padding: 6px 9px;
+
+  border-radius: 7px;
+
+  background: rgba(30, 30, 30, 0.95);
+  color: #ffffff;
+
+  font:
+    500 11px "Plus Jakarta Sans",
+    sans-serif;
+
+  line-height: 1;
+
+  white-space: nowrap;
+
+  pointer-events: none;
+
+  opacity: 0;
+  visibility: hidden;
+
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
+
+  z-index: 1100;
+}
+
+
+.dock-item:hover .dock-tooltip {
+  opacity: 1;
+  visibility: visible;
+
+  transform:
+    translateX(-50%)
+    translateY(0);
+}
+
+
+/* =========================================================
+   TABLET / SMALL LAPTOP
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+  .dock-item,
+  .theme-toggle {
+    width: 82px;
+    height: 66px;
+
+    min-width: 82px;
+    min-height: 66px;
+
+    border-radius: 15px;
   }
-  .brand-subtitle {
-    display: none;
+
+
+  .dock-item svg,
+  .theme-toggle svg {
+    width: 32px;
+    height: 32px;
   }
-  .menu-toggle {
-    display: inline-grid;
-    place-items: center;
-    width: 36px;
-    height: 36px;
-  }
+
+
   .nav-links {
-    display: none;
-    position: absolute;
-    top: 65px;
-    left: 0;
-    right: 0;
-    padding: 16px;
-    border-bottom: 1px solid var(--line);
-    background: var(--surface);
-    box-shadow: 0 12px 24px rgba(20, 30, 23, 0.06);
+    gap: 4px;
   }
-  .nav-links-open {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+}
+
+
+/* =========================================================
+   TABLET / LARGE MOBILE
+   ========================================================= */
+
+@media (max-width: 780px) {
+
+  .site-nav {
+    left: 50%;
+    bottom: 8px;
+
+    width: calc(100% - 24px);
+
+    border-radius: 19px;
   }
-  .nav-links a,
-  .nav-logout,
-  .theme-toggle {
+
+
+  .nav-content {
     width: 100%;
-    justify-content: center;
-    min-height: 40px;
+    padding: 7px;
   }
+
+
+  .nav-links {
+    width: 100%;
+    gap: 3px;
+  }
+
+
+  .dock-item,
   .theme-toggle {
-    justify-self: center;
-    width: 40px;
+    width: auto;
+
+    min-width: 0;
+
+    height: 64px;
+    min-height: 64px;
+
+    flex: 1;
+
+    border-radius: 14px;
   }
-  .nav-register,
-  .nav-write {
-    grid-column: span 2;
+
+
+  .dock-item svg,
+  .theme-toggle svg {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+  .site-nav {
+    bottom: 7px;
+
+    width: calc(100% - 20px);
+
+    border-radius: 18px;
+  }
+
+
+  .nav-content {
+    padding: 6px;
+  }
+
+
+  .nav-links {
+    gap: 2px;
+  }
+
+
+  .dock-item,
+  .theme-toggle {
+    height: 60px;
+    min-height: 60px;
+
+    border-radius: 13px;
+  }
+
+
+  .dock-item svg,
+  .theme-toggle svg {
+    width: 27px;
+    height: 27px;
+  }
+}
+
+
+/* =========================================================
+   VERY SMALL SCREENS
+   ========================================================= */
+
+@media (max-width: 420px) {
+
+  .site-nav {
+    bottom: 6px;
+
+    width: calc(100% - 16px);
+
+    border-radius: 17px;
+  }
+
+
+  .nav-content {
+    padding: 5px;
+  }
+
+
+  .nav-links {
+    gap: 1px;
+  }
+
+
+  .dock-item,
+  .theme-toggle {
+    height: 56px;
+    min-height: 56px;
+
+    border-radius: 12px;
+  }
+
+
+  .dock-item svg,
+  .theme-toggle svg {
+    width: 25px;
+    height: 25px;
+  }
+
+
+  .dock-tooltip {
+    display: none;
+  }
+}
+
+
+/* =========================================================
+   EXTREMELY SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 360px) {
+
+  .site-nav {
+    bottom: 5px;
+
+    width: calc(100% - 12px);
+
+    border-radius: 16px;
+  }
+
+
+  .nav-content {
+    padding: 4px;
+  }
+
+
+  .nav-links {
+    gap: 0;
+  }
+
+
+  .dock-item,
+  .theme-toggle {
+    height: 52px;
+    min-height: 52px;
+
+    border-radius: 11px;
+  }
+
+
+  .dock-item svg,
+  .theme-toggle svg {
+    width: 23px;
+    height: 23px;
   }
 }

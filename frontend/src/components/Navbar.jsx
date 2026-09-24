@@ -1,17 +1,99 @@
-import { Link, NavLink } from "react-router-dom";
-
+import { NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
-
 import {
     getAccessToken,
     getCurrentUser,
     isAdmin
 } from "../lib/auth";
-
 import "./Navbar.css";
 
-function ThemeIcon({ darkMode }) {
+function DockIcon({ type }) {
+    if (type === "home") {
+        return (
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 10.5 12 3l9 7.5" />
+                <path d="M5.5 9.5V21h13V9.5" />
+                <path d="M9.5 21v-6h5v6" />
+            </svg>
+        );
+    }
 
+    if (type === "dispatches") {
+        return (
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <rect
+                    x="4"
+                    y="4"
+                    width="16"
+                    height="16"
+                    rx="2"
+                />
+                <path d="M8 8h8M8 12h8M8 16h5" />
+            </svg>
+        );
+    }
+
+    if (type === "articles") {
+        return (
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6 3h9l4 4v14H6z" />
+                <path d="M15 3v5h4M9 12h6M9 16h6" />
+            </svg>
+        );
+    }
+
+    if (type === "write") {
+        return (
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 20h4L19 9l-4-4L4 16v4z" />
+                <path d="m13.5 6.5 4 4" />
+            </svg>
+        );
+    }
+
+    if (type === "profile") {
+        return (
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="8" r="4" />
+                <path d="M4 21c.8-4 3.5-6 8-6s7.2 2 8 6" />
+            </svg>
+        );
+    }
+
+    if (type === "login") {
+        return (
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M10 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5" />
+                <path d="M13 8l4 4-4 4" />
+                <path d="M8 12h9" />
+            </svg>
+        );
+    }
+
+    if (type === "register") {
+        return (
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="9" cy="8" r="4" />
+                <path d="M2.5 21c.8-4 3-6 6.5-6s5.7 2 6.5 6" />
+                <path d="M18 10v8M14 14h8" />
+            </svg>
+        );
+    }
+
+    if (type === "create-article") {
+        return (
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M5 3h14v18H5z" />
+                <path d="M8 7h8M8 11h8M8 15h4" />
+                <path d="M17 16v5M14.5 18.5h5" />
+            </svg>
+        );
+    }
+
+    return null;
+}
+
+function ThemeIcon({ darkMode }) {
     return darkMode ? (
         <svg viewBox="0 0 24 24" aria-hidden="true">
             <circle cx="12" cy="12" r="4" />
@@ -24,24 +106,8 @@ function ThemeIcon({ darkMode }) {
     );
 }
 
-function MenuIcon({ open }) {
-
-    return (
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-            {open ? (
-                <path d="m6 6 12 12M18 6 6 18" />
-            ) : (
-                <path d="M4 7h16M4 12h16M4 17h16" />
-            )}
-        </svg>
-    );
-}
-
 function Navbar() {
-
     const [darkMode, setDarkMode] = useState(false);
-
-    const [menuOpen, setMenuOpen] = useState(false);
 
     const [loggedIn, setLoggedIn] = useState(
         Boolean(getAccessToken())
@@ -53,175 +119,158 @@ function Navbar() {
         getCurrentUser()
     );
 
-    const closeMenu = () => setMenuOpen(false);
-
-    // Update Navbar whenever login/logout happens
     useEffect(() => {
-
         const updateAuth = () => {
-
-            setLoggedIn(
-                Boolean(getAccessToken())
-            );
-
-            setAdmin(
-                isAdmin()
-            );
-
-            setCurrentUser(
-                getCurrentUser()
-            );
+            setLoggedIn(Boolean(getAccessToken()));
+            setAdmin(isAdmin());
+            setCurrentUser(getCurrentUser());
         };
 
-        window.addEventListener(
-            "authChanged",
-            updateAuth
-        );
+        window.addEventListener("authChanged", updateAuth);
 
         return () => {
-
-            window.removeEventListener(
-                "authChanged",
-                updateAuth
-            );
-
+            window.removeEventListener("authChanged", updateAuth);
         };
-
     }, []);
 
     const toggleTheme = () => {
-
         setDarkMode((prev) => !prev);
-
         document.body.classList.toggle("dark");
-
     };
 
     return (
-
         <nav className="site-nav">
-
             <div className="nav-content">
+                <div className="nav-links">
 
-                <Link
-                    to="/"
-                    className="brand"
-                    onClick={closeMenu}
-                >
-
-                    <span className="brand-name">
-                        CodeBlogs
-                    </span>
-
-                    <span className="brand-subtitle">
-                        Personal &amp; Public Coding Development Journal
-                    </span>
-
-                </Link>
-
-                <button
-                    className="menu-toggle"
-                    onClick={() => setMenuOpen(!menuOpen)}
-                    aria-label="Toggle navigation"
-                    aria-expanded={menuOpen}
-                >
-                    <MenuIcon open={menuOpen} />
-                </button>
-
-                <div
-                    className={`nav-links ${
-                        menuOpen ? "nav-links-open" : ""
-                    }`}
-                >
-
+                    {/* Home */}
                     <NavLink
                         to="/"
                         end
-                        onClick={closeMenu}
+                        className="dock-item"
+                        aria-label="Home"
                     >
-                        Home
+                        <DockIcon type="home" />
+                        <span className="dock-tooltip">
+                            Home
+                        </span>
                     </NavLink>
 
+
+                    {/* Dispatches */}
                     <NavLink
                         to="/blogs"
-                        onClick={closeMenu}
+                        className="dock-item"
+                        aria-label="Dispatches"
                     >
-                        Dispatches
+                        <DockIcon type="dispatches" />
+                        <span className="dock-tooltip">
+                            Dispatches
+                        </span>
                     </NavLink>
 
+
+                    {/* Articles */}
                     <NavLink
                         to="/articles"
-                        onClick={closeMenu}
+                        className="dock-item"
+                        aria-label="Articles"
                     >
-                        Articles
+                        <DockIcon type="articles" />
+                        <span className="dock-tooltip">
+                            Articles
+                        </span>
                     </NavLink>
+
 
                     {loggedIn ? (
                         <>
-
+                            {/* Profile */}
                             <NavLink
                                 to={`/users/${currentUser?.username}`}
-                                onClick={closeMenu}
+                                className="dock-item"
+                                aria-label="Profile"
                             >
-                                Profile
+                                <DockIcon type="profile" />
+                                <span className="dock-tooltip">
+                                    Profile
+                                </span>
                             </NavLink>
 
+
+                            {/* Write */}
                             <NavLink
-                                className="nav-write"
                                 to="/create-blog"
-                                onClick={closeMenu}
+                                className="dock-item"
+                                aria-label="Write a dispatch"
                             >
-                                Write a dispatch
+                                <DockIcon type="write" />
+                                <span className="dock-tooltip">
+                                    Write
+                                </span>
                             </NavLink>
 
-                            {admin && (
 
+                            {/* Admin */}
+                            {admin && (
                                 <NavLink
                                     to="/create-article"
-                                    onClick={closeMenu}
+                                    className="dock-item"
+                                    aria-label="Create article"
                                 >
-                                    Create Article
+                                    <DockIcon type="create-article" />
+                                    <span className="dock-tooltip">
+                                        Create Article
+                                    </span>
                                 </NavLink>
-
                             )}
-
                         </>
                     ) : (
                         <>
-
+                            {/* Login */}
                             <NavLink
-                                className="nav-login"
                                 to="/login"
-                                onClick={closeMenu}
+                                className="dock-item"
+                                aria-label="Login"
                             >
-                                Login
+                                <DockIcon type="login" />
+                                <span className="dock-tooltip">
+                                    Login
+                                </span>
                             </NavLink>
 
+
+                            {/* Register */}
                             <NavLink
-                                className="nav-register"
                                 to="/register"
-                                onClick={closeMenu}
+                                className="dock-item"
+                                aria-label="Register"
                             >
-                                Register
+                                <DockIcon type="register" />
+                                <span className="dock-tooltip">
+                                    Register
+                                </span>
                             </NavLink>
-
                         </>
                     )}
 
+
+                    {/* Theme */}
                     <button
-                        className="theme-toggle"
+                        className="theme-toggle dock-item"
                         onClick={toggleTheme}
                         aria-label="Toggle dark mode"
                     >
                         <ThemeIcon darkMode={darkMode} />
+
+                        <span className="dock-tooltip">
+                            {darkMode ? "Light Mode" : "Dark Mode"}
+                        </span>
                     </button>
 
                 </div>
-
             </div>
-
         </nav>
-
     );
 }
 
