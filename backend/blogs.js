@@ -5,7 +5,7 @@ const blogsschema = new mongoose.Schema({
         type: String,
         required: true
     },
-    article:{
+    content:{
         type: String,
         required: true
     },

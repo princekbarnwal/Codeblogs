@@ -46,7 +46,7 @@ app.get('/users/:username' , async (req, res)=>{
             })
             const latestblog = await blogs.findOne({author : user._id})
             .sort({ createdAt : -1})
-            .select(" title article createdAt");
+            .select(" title content createdAt");
 
             return res.status(200).json({
                 username : user.username,
@@ -79,10 +79,25 @@ app.get('/blogs/me' , verifytoken, async (req, res)=>{
 
 app.get('/blogs',async (req,res)=>{
     try {
-        const blog = await blogs.find();
-        res.json(blog);
+        const search = req.query.search?.trim();
+
+        let query = {};
+
+        if(search){
+            const escsearch = search.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+
+            query = {
+                $or:[
+                    {title: {$regex: escsearch, $options: "i"}},
+                    {content: {$regex: escsearch, $options: "i"}}
+                ]
+            }
+        }
+        const result = await blogs.find(query).populate("author", "name username").sort({createdAt:-1});
+        return res.status(200).json(result);
     } 
     catch (error) {
+        console.log(error);
         res.status(500).json({error:"Server Unavailable"});
     }
 });
@@ -90,27 +105,27 @@ app.get('/blogs',async (req,res)=>{
 app.get('/blogs/:id',async (req,res)=>{
     const id=req.params.id;
     try {
-        const blog = await blogs.findById(id);
+        const blog = await blogs.findById(id).populate("author","name username");
         if(!blog)
             res.status(404).json("Blog not found");
         else{
-            const blog = await blogs.findById(id);
             res.json(blog);
         }
     } 
     catch (error) {
+        console.log(error);
         res.status(500).json({error:"Server Unavailable"});
     }
 });
 
 app.post('/blogs', verifytoken , async (req,res)=>{
     const title=req.body.title;
-    const article=req.body.article;
+    const content=req.body.content;
     const author=req.user.userid;
     try {
         const newBlog = await blogs.create({
             title: title,
-            article: article,
+            content: content,
             author: author
         });
         res.status(201).json(newBlog);
@@ -168,7 +183,7 @@ app.get('/articles/:id', async (req, res) => {
 });
 
 app.post('/articles', verifytoken, verifyadmin,  async (req, res) => {
-    const { title, content, name, category, sourceUrl} = req.body;
+    const { title, content, category, sourceUrl} = req.body;
     try {
         const newArticle = await articles.create({
             title,

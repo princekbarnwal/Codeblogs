@@ -1,43 +1,88 @@
+
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 function Blogs() {
   const [blogs, setBlogs] = useState([]);
+  const [search, setSearch] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const loadBlogs = async () => {
-      try {
-        const response = await fetch("http://localhost:3000/blogs");
-        const data = await response.json();
-        if (!response.ok) {
-          throw new Error(
-            data.error || data.message || "Unable to load blogs.",
-          );
-        }
-        setBlogs(data);
-      } catch (loadError) {
-        setError(loadError.message || "Unable to connect to the server.");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const loadBlogs = async (searchTerm = "") => {
+    try {
+      setLoading(true);
+      setError("");
 
+      const response = await fetch(
+        `http://localhost:3000/blogs?search=${encodeURIComponent(searchTerm)}`
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.error || data.message || "Unable to load blogs."
+        );
+      }
+
+      setBlogs(data);
+    } catch (loadError) {
+      setError(
+        loadError.message || "Unable to connect to the server."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     loadBlogs();
   }, []);
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    loadBlogs(search.trim());
+  };
+
+  const handleClear = () => {
+    setSearch("");
+    loadBlogs("");
+  };
+
   return (
     <main className="blogs-page">
+      {/* Search bar at the top */}
+      <form className="blog-search" onSubmit={handleSearch}>
+        <input
+          type="text"
+          placeholder="Search blogs..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+
+        <button type="submit" disabled={loading}>
+          Search
+        </button>
+
+        {search && (
+          <button
+            type="button"
+            onClick={handleClear}
+            disabled={loading}
+          >
+            Clear
+          </button>
+        )}
+      </form>
+
+      {/* Hero section */}
       <section className="blogs-hero">
         <div>
           <p className="eyebrow">MY WRITINGS</p>
-
           <h1>
             Thoughts, ideas
             <br />& things I've learned.
           </h1>
-
           <p className="blogs-description">
             A collection of my experiences, experiments, and lessons from
             building software.
@@ -49,6 +94,7 @@ function Blogs() {
         </Link>
       </section>
 
+      {/* Blog list */}
       <section className="blogs-content">
         <div className="blogs-heading">
           <div>
@@ -56,7 +102,9 @@ function Blogs() {
             <h2>Latest writing</h2>
           </div>
 
-          <span className="blog-count">{blogs.length} posts</span>
+          <span className="blog-count">
+            {blogs.length} {blogs.length === 1 ? "post" : "posts"}
+          </span>
         </div>
 
         <div className="blogs-list">
@@ -65,7 +113,11 @@ function Blogs() {
           ) : error ? (
             <p className="empty-blogs">{error}</p>
           ) : blogs.length === 0 ? (
-            <p className="empty-blogs">No blogs published yet.</p>
+            <p className="empty-blogs">
+              {search
+                ? "No blogs found. Try another search."
+                : "No blogs published yet."}
+            </p>
           ) : (
             blogs.map((blog, index) => (
               <Link
@@ -89,14 +141,24 @@ function Blogs() {
                         </span>
                       </>
                     )}
+
+                    <span>·</span>
+                    <span>
+                      By{" "}
+                      {blog.anonymous
+                        ? "Anonymous"
+                        : blog.author?.name ||
+                          blog.author?.username ||
+                          "Unknown author"}
+                    </span>
                   </div>
 
                   <h3>{blog.title}</h3>
 
                   <p>
-                    {blog.article.length > 180
-                      ? blog.article.substring(0, 180) + "..."
-                      : blog.article}
+                    {(blog.content || "").length > 180
+                      ? blog.content.substring(0, 180) + "..."
+                      : blog.content || ""}
                   </p>
 
                   <span className="read-blog">
