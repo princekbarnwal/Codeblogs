@@ -12,7 +12,7 @@ const articleSchema = new mongoose.Schema(
     },
     name: {
       type: String,
-      required: true,
+      default: "Admin"
     },
     category: {
       type: String,

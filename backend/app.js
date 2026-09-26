@@ -6,6 +6,7 @@ import quotes from "./quotes.js";
 import cors from "cors";
 import router from "./auth.js";
 import verifytoken from "./middleware.js";
+import verifyadmin from "./admin.middleware.js";
 import users from "./users.js";
 
 const app=express();
@@ -166,13 +167,12 @@ app.get('/articles/:id', async (req, res) => {
     }
 });
 
-app.post('/articles', async (req, res) => {
+app.post('/articles', verifytoken, verifyadmin,  async (req, res) => {
     const { title, content, name, category, sourceUrl} = req.body;
     try {
         const newArticle = await articles.create({
             title,
             content,
-            name,
             category,
             sourceUrl: sourceUrl || ""
         });
@@ -182,7 +182,7 @@ app.post('/articles', async (req, res) => {
     }
 });
 
-app.delete('/articles/:id', async (req, res) => {
+app.delete('/articles/:id', verifytoken, verifyadmin, async (req, res) => {
     const id = req.params.id;
     try {
         const article = await articles.findById(id);
