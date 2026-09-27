@@ -8,7 +8,7 @@ function CreateBlog() {
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [name, setName] = useState("");
+  const [anonymous, setAnonymous] = useState(false);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -24,7 +24,11 @@ function CreateBlog() {
           "Content-Type": "application/json",
           ...getAuthorizationHeader(),
         },
-        body: JSON.stringify({ title, content, name }),
+        body: JSON.stringify({
+          title,
+          content,
+          anonymous,
+        }),
       });
 
       const data = await response.json();
@@ -79,15 +83,29 @@ function CreateBlog() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="blog-author">Author</label>
-            <input
-              id="blog-author"
-              type="text"
-              placeholder="Your name"
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-              required
-            />
+            <label>Publish as</label>
+
+            <div className="author-options">
+              <label>
+                <input
+                  type="radio"
+                  name="publishAs"
+                  checked={!anonymous}
+                  onChange={() => setAnonymous(false)}
+                />
+                Use my username
+              </label>
+
+              <label>
+                <input
+                  type="radio"
+                  name="publishAs"
+                  checked={anonymous}
+                  onChange={() => setAnonymous(true)}
+                />
+                Post anonymously
+              </label>
+            </div>
           </div>
 
           <div className="form-group">

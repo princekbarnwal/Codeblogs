@@ -51,7 +51,7 @@ function Blogs() {
 
   return (
     <main className="blogs-page">
-      {/* Search bar at the top */}
+      {/* Search bar */}
       <form className="blog-search" onSubmit={handleSearch}>
         <input
           type="text"
@@ -147,9 +147,7 @@ function Blogs() {
                       By{" "}
                       {blog.anonymous
                         ? "Anonymous"
-                        : blog.author?.name ||
-                          blog.author?.username ||
-                          "Unknown author"}
+                        : `${blog.author?.name || "Unknown"} (@${blog.author?.username || "unknown"})`}
                     </span>
                   </div>
 

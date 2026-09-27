@@ -94,7 +94,16 @@ app.get('/blogs',async (req,res)=>{
             }
         }
         const result = await blogs.find(query).populate("author", "name username").sort({createdAt:-1});
-        return res.status(200).json(result);
+        const publicBlogs = result.map((blog) => {
+            const blogData = blog.toObject();
+
+            if (blogData.anonymous) {
+                blogData.author = null;
+            }
+
+            return blogData;
+        });
+        return res.status(200).json(publicBlogs);
     } 
     catch (error) {
         console.log(error);
@@ -107,9 +116,15 @@ app.get('/blogs/:id',async (req,res)=>{
     try {
         const blog = await blogs.findById(id).populate("author","name username");
         if(!blog)
-            res.status(404).json("Blog not found");
+            return res.status(404).json("Blog not found");
         else{
-            res.json(blog);
+            const blogData = blog.toObject();
+
+            if (blogData.anonymous) {
+                blogData.author = null;
+            }
+
+            return res.status(200).json(blogData);
         }
     } 
     catch (error) {
@@ -122,11 +137,23 @@ app.post('/blogs', verifytoken , async (req,res)=>{
     const title=req.body.title;
     const content=req.body.content;
     const author=req.user.userid;
+    const anonymous = req.body.anonymous ?? false;
     try {
+        if (!title?.trim() || !content?.trim()) {
+            return res.status(400).json({
+                message: "Title and content are required"
+            });
+        }
+        if (typeof anonymous !== "boolean") {
+            return res.status(400).json({
+                message: "Anonymous must be a boolean"
+            });
+        }
         const newBlog = await blogs.create({
-            title: title,
+            title: title.trim(),
             content: content,
-            author: author
+            author: author,
+            anonymous: anonymous
         });
         res.status(201).json(newBlog);
     } 

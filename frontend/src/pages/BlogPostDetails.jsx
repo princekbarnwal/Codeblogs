@@ -13,13 +13,11 @@ function BlogPostDetails() {
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
   const [editing, setEditing] = useState(false);
-
   const [editForm, setEditForm] = useState({
     title: "",
-    name: "",
     content: "",
+    anonymous: false,
   });
-
   const [editError, setEditError] = useState("");
   const [saving, setSaving] = useState(false);
   const [showDeletePanel, setShowDeletePanel] = useState(false);
@@ -57,8 +55,8 @@ function BlogPostDetails() {
   const startEditing = () => {
     setEditForm({
       title: blog.title || "",
-      name: blog.name || "",
       content: blog.content || "",
+      anonymous: blog.anonymous ?? false,
     });
 
     setEditError("");
@@ -185,18 +183,38 @@ function BlogPostDetails() {
             </div>
 
             <div className="form-group">
-              <label htmlFor="edit-author">Author</label>
-              <input
-                id="edit-author"
-                value={editForm.name}
-                onChange={(event) =>
-                  setEditForm({
-                    ...editForm,
-                    name: event.target.value,
-                  })
-                }
-                required
-              />
+              <label>Publish as</label>
+              <div className="author-options">
+                <label>
+                  <input
+                    type="radio"
+                    name="editPublishAs"
+                    checked={!editForm.anonymous}
+                    onChange={() =>
+                      setEditForm({
+                        ...editForm,
+                        anonymous: false,
+                      })
+                    }
+                  />
+                  Use my username
+                </label>
+
+                <label>
+                  <input
+                    type="radio"
+                    name="editPublishAs"
+                    checked={editForm.anonymous}
+                    onChange={() =>
+                      setEditForm({
+                        ...editForm,
+                        anonymous: true,
+                      })
+                    }
+                  />
+                  Post anonymously
+                </label>
+              </div>
             </div>
 
             <div className="form-group">
@@ -241,30 +259,25 @@ function BlogPostDetails() {
             <header className="article-header">
               <p className="article-category">BLOG</p>
               <h1>{blog.title}</h1>
-              <p className="blog-author">
-                Written by {
-                  blog.anonymous
-                    ? "Anonymous"
-                    : blog.author?.name || blog.author?.username || "Unknown author"
-                }
-              </p>
-              <div className="article-meta">
-                <span>By {blog.name || "Unknown author"}</span>
 
+              <p className="blog-author">
+                {blog.anonymous
+                  ? "Written by Anonymous"
+                  : `Written by ${blog.author?.name || "Unknown"} (@${blog.author?.username || "unknown"})`}
+              </p>
+
+              <div className="article-meta">
                 {blog.createdAt && (
-                  <>
-                    <span className="meta-dot">•</span>
-                    <span>
-                      {new Date(blog.createdAt).toLocaleDateString(
-                        "en-US",
-                        {
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                        }
-                      )}
-                    </span>
-                  </>
+                  <span>
+                    {new Date(blog.createdAt).toLocaleDateString(
+                      "en-US",
+                      {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      }
+                    )}
+                  </span>
                 )}
               </div>
             </header>

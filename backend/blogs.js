@@ -13,6 +13,10 @@ const blogsschema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref:"Users",
         required: true
+    },
+    anonymous:{
+        type: Boolean,
+        default: false
     }
 },{
     timestamps:true
