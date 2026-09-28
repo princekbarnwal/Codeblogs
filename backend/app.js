@@ -8,6 +8,7 @@ import router from "./auth.js";
 import verifytoken from "./middleware.js";
 import verifyadmin from "./admin.middleware.js";
 import users from "./users.js";
+import "dotenv/config";
 
 const app=express();
 
@@ -17,12 +18,13 @@ app.use("/auth",router);
 
 async function connectdb() {
     try {
-        const MONGO_URI="mongodb://localhost:27017/Codeblogs";
+        const MONGO_URI = process.env.MONGO_URI;
         await mongoose.connect(MONGO_URI);
         console.log("MONGO_DB connected successfully");
         
     } catch (error) {
-        console.error("error fetching data");
+        console.log(error);
+        console.log("error fetching data");
     }
 }
 await connectdb();
