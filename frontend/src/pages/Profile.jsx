@@ -130,9 +130,9 @@ function Profile() {
                     </h2>
 
                     <p>
-                        {profile.latestBlog.article.length > 180
-                            ? profile.latestBlog.article.slice(0, 180) + "..."
-                            : profile.latestBlog.article}
+                        {profile.latestBlog.content.length > 180
+                            ? profile.latestBlog.content.slice(0, 180) + "..."
+                            : profile.latestBlog.content}
                     </p>
 
                     <Link

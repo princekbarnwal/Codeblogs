@@ -58,6 +58,7 @@ app.get('/users/:username' , async (req, res)=>{
         }
     } 
     catch (error) {
+        console.log(error);
         res.status(500).json({error:"Server Unavailable"});
     }
 });
@@ -156,6 +157,44 @@ app.post('/blogs', verifytoken , async (req,res)=>{
             anonymous: anonymous
         });
         res.status(201).json(newBlog);
+    } 
+    catch (error) {
+        console.log(error);
+        res.status(500).json({error:"Server Unavailable"});
+    }
+});
+
+app.put('/blogs/:id', verifytoken , async (req , res) => {
+    const id=req.params.id;
+    const title=req.body.title;
+    const content=req.body.content;
+    const anonymous = req.body.anonymous;
+    try {
+        const blog = await blogs.findById(id);
+        if(!blog)
+            return res.status(404).json({message:"Blog not found"});
+        if(blog.author.toString()!==req.user.userid.toString())
+            return res.status(403).json({message:"You can only update your blog"});
+        if(title!==undefined){
+            if(typeof(title)!=="string" || !title.trim()){
+                return res.status(400).json({message:"title can not be empty"})
+            }
+            blog.title=title.trim();
+        }
+        if(content!==undefined){
+            if(typeof(content)!=="string" || !content.trim()){
+                return res.status(400).json({message:"content can not be empty"})
+            }
+            blog.content=content.trim();
+        }
+        if(anonymous!==undefined){
+            if(typeof(anonymous)!=="boolean"){
+                return res.status(400).json({message:"Anonymous must be boolean"})
+            }
+            blog.anonymous=anonymous;
+        }
+        await blog.save();
+        return res.status(200).json({message:"Blog upddated successfully",blog});
     } 
     catch (error) {
         console.log(error);

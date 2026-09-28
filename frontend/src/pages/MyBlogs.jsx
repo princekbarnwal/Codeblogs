@@ -88,9 +88,9 @@ function MyBlogs() {
                                 <h2>{blog.title}</h2>
 
                                 <p>
-                                    {blog.article.length > 180
-                                        ? blog.article.slice(0, 180) + "..."
-                                        : blog.article}
+                                    {blog.content.length > 180
+                                        ? blog.content.slice(0, 180) + "..."
+                                        : blog.content}
                                 </p>
 
                                 <Link
