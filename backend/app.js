@@ -1,5 +1,4 @@
 import express from "express";
-import mongoose from "mongoose";
 import blogs from "./blogs.js";
 import articles from "./articles.js";
 import quotes from "./quotes.js";
@@ -15,19 +14,6 @@ const app=express();
 app.use(cors());
 app.use(express.json());
 app.use("/auth",router);
-
-async function connectdb() {
-    try {
-        const MONGO_URI = process.env.MONGO_URI;
-        await mongoose.connect(MONGO_URI);
-        console.log("MONGO_DB connected successfully");
-        
-    } catch (error) {
-        console.log(error);
-        console.log("error fetching data");
-    }
-}
-await connectdb();
 
 app.get('/quotes', (req,res)=>{
     const quote= quotes[Math.floor(Math.random() * quotes.length)];
