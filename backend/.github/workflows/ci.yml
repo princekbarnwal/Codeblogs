@@ -6,7 +6,6 @@ jobs:
     defaults:
       run:
         working-directory: backend
-              - run: pwd && ls
     services:
       mongodb:
         image: mongo:latest
