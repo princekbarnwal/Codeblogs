@@ -1,0 +1,14 @@
+services:
+  app:
+    build: .
+    environment:
+      MONGO_URI_DOCKER: ${MONGO_URI_DOCKER}
+    ports: 
+      - "3000:3000"
+    depends_on: 
+      - mongo
+  mongo:
+    image: mongo:latest
+    command: mongod
+    ports:
+      - "27017:27017"
