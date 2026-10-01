@@ -48,7 +48,7 @@ test('register login post and delete', async () => {
     expect(registerresponse.status).toBe(201);
 
     const loginresponse = await request(app).post("/auth/login").send({
-        email:"test@gmail.com",
+        identifier:"test@gmail.com",
         password:"test12345"
     });
     expect(loginresponse.status).toBe(200);
@@ -66,14 +66,14 @@ test('registration reject', async () => {
 });
 test('login unsucessful', async () => {
     const loginresponse = await request(app).post("/auth/login").send({
-        email:"test@gmail.com",
+        identifier:"test@gmail.com",
         password:"wrongpassword"
     });
     expect(loginresponse.status).toBe(401);
 });
 test('login route with valid token', async () => {
     const loginresponse = await request(app).post("/auth/login").send({
-        email:"test@gmail.com",
+        identifier:"test@gmail.com",
         password:"test12345"
     });
 
