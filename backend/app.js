@@ -1,4 +1,5 @@
 import express from "express";
+import helmet from "helmet";
 import blogs from "./blogs.js";
 import articles from "./articles.js";
 import quotes from "./quotes.js";
@@ -8,19 +9,23 @@ import verifytoken from "./middleware.js";
 import verifyadmin from "./admin.middleware.js";
 import users from "./users.js";
 import "dotenv/config";
+import { authlimit , createbloglimit , readbloglimit } from "./ratelimiter.js";
+import validate from "./validate.js";
+import { createBlogSchema , updateBlogSchema } from "./validation.js";
 
 const app=express();
 
+app.use(helmet());
 app.use(cors());
 app.use(express.json());
-app.use("/auth",router);
+app.use("/auth", authlimit , router);
 
-app.get('/quotes', (req,res)=>{
+app.get('/quotes', readbloglimit , (req,res)=>{
     const quote= quotes[Math.floor(Math.random() * quotes.length)];
     res.json(quote);
 });
 
-app.get('/users/:username' , async (req, res)=>{
+app.get('/users/:username' , readbloglimit , async (req, res)=>{
     try {
         const user = await users.findOne({
             username : req.params.username
@@ -51,7 +56,7 @@ app.get('/users/:username' , async (req, res)=>{
     }
 });
 
-app.get('/blogs/me' , verifytoken, async (req, res)=>{
+app.get('/blogs/me' , readbloglimit ,verifytoken, async (req, res)=>{
     try {
         const myblogs = await blogs.find({author: req.user.userid})
         .sort({createdAt: -1});
@@ -66,7 +71,7 @@ app.get('/blogs/me' , verifytoken, async (req, res)=>{
     }
 });
 
-app.get('/blogs',async (req,res)=>{
+app.get('/blogs', readbloglimit , async (req,res)=>{
     try {
         const search = req.query.search?.trim();
 
@@ -100,7 +105,7 @@ app.get('/blogs',async (req,res)=>{
     }
 });
 
-app.get('/blogs/:id',async (req,res)=>{
+app.get('/blogs/:id', readbloglimit , async (req,res)=>{
     const id=req.params.id;
     try {
         const blog = await blogs.findById(id).populate("author","name username");
@@ -122,7 +127,7 @@ app.get('/blogs/:id',async (req,res)=>{
     }
 });
 
-app.post('/blogs', verifytoken , async (req,res)=>{
+app.post('/blogs', createbloglimit , verifytoken , validate(createBlogSchema) , async (req,res)=>{
     const title=req.body.title;
     const content=req.body.content;
     const author=req.user.userid;
@@ -152,7 +157,7 @@ app.post('/blogs', verifytoken , async (req,res)=>{
     }
 });
 
-app.put('/blogs/:id', verifytoken , async (req , res) => {
+app.put('/blogs/:id', createbloglimit ,verifytoken , validate(updateBlogSchema) , async (req , res) => {
     const id=req.params.id;
     const title=req.body.title;
     const content=req.body.content;
@@ -190,7 +195,7 @@ app.put('/blogs/:id', verifytoken , async (req , res) => {
     }
 });
 
-app.delete('/blogs/:id',  verifytoken , async(req,res)=>{
+app.delete('/blogs/:id', createbloglimit , verifytoken , async(req,res)=>{
     const id=req.params.id;
     try {
         const blog = await blogs.findById(id);
@@ -214,7 +219,7 @@ app.delete('/blogs/:id',  verifytoken , async(req,res)=>{
 // ARTICLES ROUTES
 // =========================
 
-app.get('/articles', async (req, res) => {
+app.get('/articles', readbloglimit , async (req, res) => {
     try {
         const all = await articles.find().sort({ createdAt: -1 });
         res.json(all);
@@ -223,7 +228,7 @@ app.get('/articles', async (req, res) => {
     }
 });
 
-app.get('/articles/:id', async (req, res) => {
+app.get('/articles/:id', readbloglimit , async (req, res) => {
     const id = req.params.id;
     try {
         const article = await articles.findById(id);
@@ -236,7 +241,7 @@ app.get('/articles/:id', async (req, res) => {
     }
 });
 
-app.post('/articles', verifytoken, verifyadmin,  async (req, res) => {
+app.post('/articles', createbloglimit , verifytoken, verifyadmin,  async (req, res) => {
     const { title, content, category, sourceUrl} = req.body;
     try {
         const newArticle = await articles.create({
@@ -251,7 +256,7 @@ app.post('/articles', verifytoken, verifyadmin,  async (req, res) => {
     }
 });
 
-app.delete('/articles/:id', verifytoken, verifyadmin, async (req, res) => {
+app.delete('/articles/:id', createbloglimit , verifytoken, verifyadmin, async (req, res) => {
     const id = req.params.id;
     try {
         const article = await articles.findById(id);

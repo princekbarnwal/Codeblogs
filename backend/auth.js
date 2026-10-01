@@ -2,21 +2,17 @@ import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import users from "./users.js";
+import validate from "./validate.js";
+import { loginSchema, registerSchema } from "./validation.js";
 
 const router = express.Router();
 
-router.post("/register",async (req,res)=>{
+router.post("/register", validate(registerSchema) , async (req,res)=>{
     try {
         const username=req.body.username;
         const name=req.body.name;
         const email=req.body.email;
         const password=req.body.password; 
-        
-        if (!username || !name || !email || !password) {
-            return res.status(400).json({
-                message: "All fields are required"
-            });
-        }
         
         const existinguser= await users.findOne({
             $or:[
@@ -49,27 +45,20 @@ router.post("/register",async (req,res)=>{
     }
 });
 
-router.post("/login", async(req,res)=>{
+router.post("/login", validate(loginSchema) , async(req,res)=>{
     try {
-        const username=req.body.username;
-        const email=req.body.email;
+        const identifier=req.body.identifier;
         const password=req.body.password;
-
-        if ((!username && !email )|| !password) {
-            return res.status(400).json({
-                message: "username or email and password are required"
-            });
-        }
 
         const existinguser= await users.findOne({
             $or:[
-                {   username    },
-                {   email   }
+                { username : identifier },
+                { email : identifier }
             ]
         });
 
         if(!existinguser){
-            return res.status(401).json({message:"Inavalid username/email or password"})
+            return res.status(401).json({message:"Invalid username/email or password"})
         }
         else{
             const passwordmatch = await bcrypt.compare(password,existinguser.password);

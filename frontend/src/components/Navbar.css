@@ -1,26 +1,69 @@
 /* =========================================================
    MAC-STYLE BOTTOM DOCK
+
+   Every size lives in the variables below. Each breakpoint
+   only changes those variables, so the dock and the space
+   reserved for it (--dock-space, read by #root in index.css)
+   can never drift apart.
+   ========================================================= */
+
+:root {
+  --dock-item-w: 100px;
+  --dock-item-h: 68px;
+  --dock-icon: 35px;
+  --dock-item-radius: 16px;
+
+  --dock-pad: 8px;
+  --dock-gap: 5px;
+  --dock-radius: 22px;
+  --dock-offset: 0px;
+  --dock-side: 0px;
+
+  /* item + top/bottom padding + 2px border + gap to the screen edge (+ iPhone home bar) */
+  --dock-space: calc(
+    var(--dock-item-h) + var(--dock-pad) * 2 + 2px + var(--dock-offset) +
+      env(safe-area-inset-bottom, 0px)
+  );
+
+  --dock-ease: var(--ease, cubic-bezier(0.2, 0.6, 0.2, 1));
+}
+
+
+/* =========================================================
+   DOCK
    ========================================================= */
 
 .site-nav {
   position: fixed;
   left: 50%;
-  bottom: 0;
+  bottom: calc(var(--dock-offset) + env(safe-area-inset-bottom, 0px));
 
   transform: translateX(-50%);
 
   z-index: 1000;
 
   width: auto;
+  max-width: calc(100% - var(--dock-side) * 2);
   height: auto;
 
   border: 1px solid var(--line);
-  border-radius: 22px;
+  border-radius: var(--dock-radius);
 
   background: var(--paper);
 
   box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.04),
     0 12px 35px rgba(0, 0, 0, 0.12);
+
+  transition:
+    background-color 0.3s var(--dock-ease),
+    border-color 0.3s var(--dock-ease);
+}
+
+body.dark .site-nav {
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.3),
+    0 12px 35px rgba(0, 0, 0, 0.45);
 }
 
 
@@ -33,7 +76,7 @@
   height: auto;
   margin: 0;
 
-  padding: 8px;
+  padding: var(--dock-pad);
 
   display: flex;
   align-items: center;
@@ -42,18 +85,10 @@
 
 
 /* =========================================================
-   HIDE OLD BRAND
+   HIDE OLD BRAND / OLD MOBILE MENU
    ========================================================= */
 
-.brand {
-  display: none;
-}
-
-
-/* =========================================================
-   HIDE OLD MOBILE MENU
-   ========================================================= */
-
+.brand,
 .menu-toggle {
   display: none;
 }
@@ -68,19 +103,27 @@
   align-items: flex-end;
   justify-content: center;
 
-  gap: 5px;
+  gap: var(--dock-gap);
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
 }
 
 
 /* =========================================================
-   DOCK ITEM
+   DOCK ITEM  (links and the theme button share one rule)
    ========================================================= */
 
-.dock-item {
+.dock-item,
+.theme-toggle {
   position: relative;
 
-  width: 100px;
-  height: 68px;
+  width: var(--dock-item-w);
+  min-width: var(--dock-item-w);
+  height: var(--dock-item-h);
+  min-height: var(--dock-item-h);
 
   flex-shrink: 0;
 
@@ -91,7 +134,7 @@
   padding: 0;
 
   border: 0;
-  border-radius: 16px;
+  border-radius: var(--dock-item-radius);
 
   color: var(--muted);
   background: transparent;
@@ -99,10 +142,12 @@
   cursor: pointer;
   text-decoration: none;
 
+  -webkit-tap-highlight-color: transparent;
+
   transition:
-    transform 0.2s ease,
-    color 0.2s ease,
-    background 0.2s ease;
+    transform 0.25s var(--dock-ease),
+    color 0.2s var(--dock-ease),
+    background-color 0.2s var(--dock-ease);
 }
 
 
@@ -110,10 +155,12 @@
    DOCK ICON
    ========================================================= */
 
-.dock-item svg {
-  width: 35px;
-  height: 35px;
+.dock-item svg,
+.theme-toggle svg {
+  width: var(--dock-icon);
+  height: var(--dock-icon);
 
+  /* !important because icon SVGs often carry their own fill/stroke attributes */
   fill: none !important;
   stroke: currentColor !important;
 
@@ -124,18 +171,46 @@
   pointer-events: none;
 
   transition:
-    transform 0.2s ease,
-    stroke-width 0.2s ease;
+    transform 0.25s var(--dock-ease),
+    stroke-width 0.2s var(--dock-ease);
 }
 
 
 /* =========================================================
-   HOVER
+   HOVER  (only on devices that can really hover, so touch
+   screens don't leave an item stuck "raised" after a tap)
    ========================================================= */
 
-.dock-item:hover {
+@media (hover: hover) {
+  .dock-item:hover,
+  .theme-toggle:hover {
+    color: var(--primary);
+    transform: translateY(-6px);
+  }
+
+  .dock-item:hover svg,
+  .theme-toggle:hover svg {
+    transform: scale(1.08);
+  }
+}
+
+.dock-item:active,
+.theme-toggle:active {
+  transform: translateY(-2px) scale(0.96);
+}
+
+
+/* =========================================================
+   KEYBOARD FOCUS
+   ========================================================= */
+
+.dock-item:focus-visible,
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+
   color: var(--primary);
-  transform: translateY(-6px);
+  background: var(--paper-soft);
 }
 
 
@@ -143,66 +218,34 @@
    ACTIVE PAGE
    ========================================================= */
 
-.dock-item.active {
+.dock-item.active,
+.dock-item[aria-current="page"] {
   color: var(--primary);
   background: var(--paper-soft);
 }
 
-
-/* =========================================================
-   THEME BUTTON
-   ========================================================= */
-
-.theme-toggle {
-  position: relative;
-
-  width: 100px;
-  height: 68px;
-
-  min-width: 100px;
-  min-height: 68px;
-
-  flex-shrink: 0;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  padding: 0;
-
-  border: 0;
-  border-radius: 16px;
-
-  color: var(--muted);
-  background: transparent;
-
-  cursor: pointer;
-
-  transition:
-    transform 0.2s ease,
-    color 0.2s ease,
-    background 0.2s ease;
+.dock-item.active svg,
+.dock-item[aria-current="page"] svg {
+  stroke-width: 2;
 }
 
+/* small "running app" dot under the current page, like the macOS dock */
+.dock-item.active::after,
+.dock-item[aria-current="page"]::after {
+  content: "";
 
-.theme-toggle:hover {
-  color: var(--primary);
-  transform: translateY(-6px);
-}
+  position: absolute;
+  left: 50%;
+  bottom: 6px;
 
+  width: 4px;
+  height: 4px;
 
-.theme-toggle svg {
-  width: 35px;
-  height: 35px;
+  border-radius: 50%;
 
-  fill: none !important;
-  stroke: currentColor !important;
+  background: var(--green);
 
-  stroke-width: 1.7;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-
-  pointer-events: none;
+  transform: translateX(-50%);
 }
 
 
@@ -214,22 +257,19 @@
   position: absolute;
 
   left: 50%;
-  bottom: calc(100% + 10px);
+  bottom: calc(100% + 12px);
 
   transform: translateX(-50%) translateY(4px);
 
-  padding: 6px 9px;
+  padding: 7px 10px;
 
   border-radius: 7px;
 
-  background: rgba(30, 30, 30, 0.95);
-  color: #ffffff;
+  background: var(--primary);
+  color: var(--surface);
 
-  font:
-    500 11px "Plus Jakarta Sans",
-    sans-serif;
-
-  line-height: 1;
+  font: 500 11px/1 var(--font-sans, "Plus Jakarta Sans", system-ui, sans-serif);
+  letter-spacing: 0.01em;
 
   white-space: nowrap;
 
@@ -239,20 +279,43 @@
   visibility: hidden;
 
   transition:
-    opacity 0.18s ease,
-    transform 0.18s ease;
+    opacity 0.18s var(--dock-ease),
+    transform 0.18s var(--dock-ease),
+    visibility 0.18s;
 
   z-index: 1100;
 }
 
+/* little pointer under the tooltip */
+.dock-tooltip::after {
+  content: "";
 
-.dock-item:hover .dock-tooltip {
+  position: absolute;
+  left: 50%;
+  top: 100%;
+
+  border: 5px solid transparent;
+  border-top-color: var(--primary);
+
+  transform: translateX(-50%);
+}
+
+.dock-item:focus-visible .dock-tooltip,
+.theme-toggle:focus-visible .dock-tooltip {
   opacity: 1;
   visibility: visible;
 
-  transform:
-    translateX(-50%)
-    translateY(0);
+  transform: translateX(-50%) translateY(0);
+}
+
+@media (hover: hover) {
+  .dock-item:hover .dock-tooltip,
+  .theme-toggle:hover .dock-tooltip {
+    opacity: 1;
+    visibility: visible;
+
+    transform: translateX(-50%) translateY(0);
+  }
 }
 
 
@@ -261,79 +324,50 @@
    ========================================================= */
 
 @media (max-width: 1100px) {
-
-  .dock-item,
-  .theme-toggle {
-    width: 82px;
-    height: 66px;
-
-    min-width: 82px;
-    min-height: 66px;
-
-    border-radius: 15px;
-  }
-
-
-  .dock-item svg,
-  .theme-toggle svg {
-    width: 32px;
-    height: 32px;
-  }
-
-
-  .nav-links {
-    gap: 4px;
+  :root {
+    --dock-item-w: 82px;
+    --dock-item-h: 66px;
+    --dock-icon: 32px;
+    --dock-item-radius: 15px;
+    --dock-gap: 4px;
   }
 }
 
 
 /* =========================================================
    TABLET / LARGE MOBILE
+   The dock floats and stretches across the screen; items
+   share the width equally.
    ========================================================= */
 
 @media (max-width: 780px) {
+  :root {
+    --dock-item-h: 64px;
+    --dock-icon: 28px;
+    --dock-item-radius: 14px;
+
+    --dock-pad: 7px;
+    --dock-gap: 3px;
+    --dock-radius: 19px;
+    --dock-offset: 8px;
+    --dock-side: 12px;
+  }
 
   .site-nav {
-    left: 50%;
-    bottom: 8px;
-
-    width: calc(100% - 24px);
-
-    border-radius: 19px;
+    width: calc(100% - var(--dock-side) * 2);
   }
 
-
-  .nav-content {
-    width: 100%;
-    padding: 7px;
-  }
-
-
+  .nav-content,
   .nav-links {
     width: 100%;
-    gap: 3px;
   }
-
 
   .dock-item,
   .theme-toggle {
     width: auto;
-
     min-width: 0;
 
-    height: 64px;
-    min-height: 64px;
-
     flex: 1;
-
-    border-radius: 14px;
-  }
-
-
-  .dock-item svg,
-  .theme-toggle svg {
-    width: 28px;
-    height: 28px;
   }
 }
 
@@ -343,39 +377,16 @@
    ========================================================= */
 
 @media (max-width: 600px) {
+  :root {
+    --dock-item-h: 60px;
+    --dock-icon: 27px;
+    --dock-item-radius: 13px;
 
-  .site-nav {
-    bottom: 7px;
-
-    width: calc(100% - 20px);
-
-    border-radius: 18px;
-  }
-
-
-  .nav-content {
-    padding: 6px;
-  }
-
-
-  .nav-links {
-    gap: 2px;
-  }
-
-
-  .dock-item,
-  .theme-toggle {
-    height: 60px;
-    min-height: 60px;
-
-    border-radius: 13px;
-  }
-
-
-  .dock-item svg,
-  .theme-toggle svg {
-    width: 27px;
-    height: 27px;
+    --dock-pad: 6px;
+    --dock-gap: 2px;
+    --dock-radius: 18px;
+    --dock-offset: 7px;
+    --dock-side: 10px;
   }
 }
 
@@ -385,44 +396,25 @@
    ========================================================= */
 
 @media (max-width: 420px) {
+  :root {
+    --dock-item-h: 56px;
+    --dock-icon: 25px;
+    --dock-item-radius: 12px;
 
-  .site-nav {
-    bottom: 6px;
-
-    width: calc(100% - 16px);
-
-    border-radius: 17px;
+    --dock-pad: 5px;
+    --dock-gap: 1px;
+    --dock-radius: 17px;
+    --dock-offset: 6px;
+    --dock-side: 8px;
   }
-
-
-  .nav-content {
-    padding: 5px;
-  }
-
-
-  .nav-links {
-    gap: 1px;
-  }
-
-
-  .dock-item,
-  .theme-toggle {
-    height: 56px;
-    min-height: 56px;
-
-    border-radius: 12px;
-  }
-
-
-  .dock-item svg,
-  .theme-toggle svg {
-    width: 25px;
-    height: 25px;
-  }
-
 
   .dock-tooltip {
     display: none;
+  }
+
+  .dock-item.active::after,
+  .dock-item[aria-current="page"]::after {
+    bottom: 5px;
   }
 }
 
@@ -432,38 +424,40 @@
    ========================================================= */
 
 @media (max-width: 360px) {
+  :root {
+    --dock-item-h: 52px;
+    --dock-icon: 23px;
+    --dock-item-radius: 11px;
 
-  .site-nav {
-    bottom: 5px;
-
-    width: calc(100% - 12px);
-
-    border-radius: 16px;
+    --dock-pad: 4px;
+    --dock-gap: 0px;
+    --dock-radius: 16px;
+    --dock-offset: 5px;
+    --dock-side: 6px;
   }
+}
 
 
-  .nav-content {
-    padding: 4px;
-  }
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
 
-
-  .nav-links {
-    gap: 0;
-  }
-
-
+@media (prefers-reduced-motion: reduce) {
+  .site-nav,
   .dock-item,
-  .theme-toggle {
-    height: 52px;
-    min-height: 52px;
-
-    border-radius: 11px;
+  .theme-toggle,
+  .dock-item svg,
+  .theme-toggle svg,
+  .dock-tooltip {
+    transition-duration: 0.01ms !important;
   }
 
-
-  .dock-item svg,
-  .theme-toggle svg {
-    width: 23px;
-    height: 23px;
+  .dock-item:hover,
+  .theme-toggle:hover,
+  .dock-item:hover svg,
+  .theme-toggle:hover svg,
+  .dock-item:active,
+  .theme-toggle:active {
+    transform: none;
   }
 }
