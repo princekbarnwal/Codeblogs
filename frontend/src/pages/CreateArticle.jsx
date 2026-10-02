@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { API_URL } from "../lib/api";
 import { getAuthorizationHeader, isAdmin } from "../lib/auth";
+
 
 function CreateArticle() {
   const navigate = useNavigate();
@@ -21,7 +23,7 @@ function CreateArticle() {
     setError("");
     setSubmitting(true);
     try {
-      const response = await fetch("http://localhost:3000/articles", {
+      const response = await fetch(`${API_URL}/articles`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

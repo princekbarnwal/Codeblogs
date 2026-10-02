@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { API_URL } from "../lib/api";
 import "./Home.css";
+
 
 const excerpt = (text, length = 145) =>
   text?.length > length ? `${text.slice(0, length).trim()}...` : text;
@@ -18,7 +20,7 @@ function Home() {
   const [quote, setQuote] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:3000/blogs")
+    fetch(`${API_URL}/blogs`)
       .then(async (response) => (response.ok ? response.json() : []))
       .then((data) =>
         setBlogs(
@@ -29,10 +31,11 @@ function Home() {
       )
       .catch(() => setBlogs([]));
 
-    fetch("http://localhost:3000/quotes")
+    fetch(`${API_URL}/quotes`)
       .then(async (response) => (response.ok ? response.json() : null))
       .then(setQuote)
       .catch(() => setQuote(null));
+
   }, []);
 
   return (

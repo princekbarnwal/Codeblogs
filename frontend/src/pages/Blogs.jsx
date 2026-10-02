@@ -1,6 +1,8 @@
 
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { API_URL } from "../lib/api";
+
 
 function Blogs() {
   const [blogs, setBlogs] = useState([]);
@@ -14,7 +16,7 @@ function Blogs() {
       setError("");
 
       const response = await fetch(
-        `http://localhost:3000/blogs?search=${encodeURIComponent(searchTerm)}`
+        `${API_URL}/blogs?search=${encodeURIComponent(searchTerm)}`
       );
 
       const data = await response.json();

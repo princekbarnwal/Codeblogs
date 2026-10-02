@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { API_URL } from "../lib/api";
 import { getAuthorizationHeader, isAdmin } from "../lib/auth";
 
-const apiUrl = "http://localhost:3000";
 
 function ArticleDetails() {
   const { id } = useParams();
@@ -28,7 +28,7 @@ function ArticleDetails() {
   useEffect(() => {
     const loadArticle = async () => {
       try {
-        const response = await fetch(`${apiUrl}/articles/${id}`);
+        const response = await fetch(`${API_URL}/articles/${id}`);
         const data = await response.json();
         if (!response.ok)
           throw new Error(data.error || data.message || "Article not found.");
@@ -47,7 +47,7 @@ function ArticleDetails() {
     setEditError("");
     setSaving(true);
     try {
-      const response = await fetch(`${apiUrl}/articles/${id}`, {
+      const response = await fetch(`${API_URL}/articles/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -79,7 +79,7 @@ function ArticleDetails() {
     setDeleteError("");
     setDeleting(true);
     try {
-      const response = await fetch(`${apiUrl}/articles/${id}`, {
+      const response = await fetch(`${API_URL}/articles/${id}`, {
         method: "DELETE",
         headers: getAuthorizationHeader(),
       });

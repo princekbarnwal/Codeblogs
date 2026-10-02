@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { API_URL } from "../lib/api";
+
 
 function Articles() {
   const [articles, setArticles] = useState([]);
@@ -9,7 +11,7 @@ function Articles() {
   useEffect(() => {
     const loadArticles = async () => {
       try {
-        const response = await fetch("http://localhost:3000/articles");
+        const response = await fetch(`${API_URL}/articles`);
         const data = await response.json();
         if (!response.ok)
           throw new Error(

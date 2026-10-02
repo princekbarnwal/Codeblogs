@@ -1,4 +1,5 @@
 import express from "express";
+import mongoose from "mongoose";
 import helmet from "helmet";
 import blogs from "./blogs.js";
 import articles from "./articles.js";
@@ -107,6 +108,11 @@ app.get('/blogs', readbloglimit , async (req,res)=>{
 
 app.get('/blogs/:id', readbloglimit , async (req,res)=>{
     const id=req.params.id;
+    if (!mongoose.isValidObjectId(id)) {
+        return res.status(400).json({
+            message: "Invalid ID"
+        });
+    }
     try {
         const blog = await blogs.findById(id).populate("author","name username");
         if(!blog)
@@ -197,6 +203,11 @@ app.put('/blogs/:id', createbloglimit ,verifytoken , validate(updateBlogSchema) 
 
 app.delete('/blogs/:id', createbloglimit , verifytoken , async(req,res)=>{
     const id=req.params.id;
+    if (!mongoose.isValidObjectId(id)) {
+        return res.status(400).json({
+            message: "Invalid ID"
+        });
+    }
     try {
         const blog = await blogs.findById(id);
         if(!blog)

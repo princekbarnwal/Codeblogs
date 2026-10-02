@@ -8,14 +8,14 @@
    ========================================================= */
 
 :root {
-  --dock-item-w: 100px;
-  --dock-item-h: 68px;
-  --dock-icon: 35px;
-  --dock-item-radius: 16px;
+  --dock-item-w: 88px;
+  --dock-item-h: 60px;
+  --dock-icon: 28px;
+  --dock-item-radius: 14px;
 
-  --dock-pad: 8px;
-  --dock-gap: 5px;
-  --dock-radius: 22px;
+  --dock-pad: 6px;
+  --dock-gap: 4px;
+  --dock-radius: 20px;
   --dock-offset: 0px;
   --dock-side: 0px;
 
@@ -49,21 +49,45 @@
   border: 1px solid var(--line);
   border-radius: var(--dock-radius);
 
-  background: var(--paper);
+  background: color-mix(in srgb, var(--paper) 90%, transparent);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  backdrop-filter: blur(18px) saturate(1.4);
 
+  /* inner top highlight + soft green-tinted drop shadow */
   box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.04),
-    0 12px 35px rgba(0, 0, 0, 0.12);
+    inset 0 1px 0 rgb(255 255 255 / 0.55),
+    0 2px 4px rgb(var(--shadow-rgb, 1 45 29) / 0.06),
+    0 18px 40px -12px rgb(var(--shadow-rgb, 1 45 29) / 0.28);
 
   transition:
+    transform 0.45s var(--dock-ease),
+    opacity 0.3s var(--dock-ease),
     background-color 0.3s var(--dock-ease),
     border-color 0.3s var(--dock-ease);
 }
 
+/* Add .is-hidden while scrolling down to read; remove it on scroll up.
+   The dock slides below the screen and the page gets the full height. */
+.site-nav.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+
+  transform: translate(-50%, calc(100% + var(--dock-offset) + 24px));
+
+  /* visibility flips only after the slide-out finishes, so it animates, then leaves tab order */
+  transition:
+    transform 0.45s var(--dock-ease),
+    opacity 0.3s var(--dock-ease),
+    visibility 0s linear 0.45s;
+}
+
+:root.dark .site-nav,
 body.dark .site-nav {
   box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.3),
-    0 12px 35px rgba(0, 0, 0, 0.45);
+    inset 0 1px 0 rgb(255 255 255 / 0.06),
+    0 2px 4px rgb(0 0 0 / 0.3),
+    0 18px 40px -12px rgb(0 0 0 / 0.55);
 }
 
 
@@ -185,12 +209,7 @@ body.dark .site-nav {
   .dock-item:hover,
   .theme-toggle:hover {
     color: var(--primary);
-    transform: translateY(-6px);
-  }
-
-  .dock-item:hover svg,
-  .theme-toggle:hover svg {
-    transform: scale(1.08);
+    transform: translateY(-3px);
   }
 }
 
@@ -215,13 +234,15 @@ body.dark .site-nav {
 
 
 /* =========================================================
-   ACTIVE PAGE
+   ACTIVE PAGE  (a quiet pill, a slightly bolder icon, one small dot)
    ========================================================= */
 
 .dock-item.active,
 .dock-item[aria-current="page"] {
   color: var(--primary);
   background: var(--paper-soft);
+
+  box-shadow: inset 0 0 0 1px var(--line);
 }
 
 .dock-item.active svg,
@@ -229,17 +250,16 @@ body.dark .site-nav {
   stroke-width: 2;
 }
 
-/* small "running app" dot under the current page, like the macOS dock */
 .dock-item.active::after,
 .dock-item[aria-current="page"]::after {
   content: "";
 
   position: absolute;
   left: 50%;
-  bottom: 6px;
+  bottom: 5px;
 
-  width: 4px;
-  height: 4px;
+  width: 3px;
+  height: 3px;
 
   border-radius: 50%;
 
@@ -247,7 +267,6 @@ body.dark .site-nav {
 
   transform: translateX(-50%);
 }
-
 
 /* =========================================================
    TOOLTIP
@@ -325,10 +344,10 @@ body.dark .site-nav {
 
 @media (max-width: 1100px) {
   :root {
-    --dock-item-w: 82px;
-    --dock-item-h: 66px;
-    --dock-icon: 32px;
-    --dock-item-radius: 15px;
+    --dock-item-w: 76px;
+    --dock-item-h: 58px;
+    --dock-icon: 26px;
+    --dock-item-radius: 13px;
     --dock-gap: 4px;
   }
 }
@@ -342,13 +361,13 @@ body.dark .site-nav {
 
 @media (max-width: 780px) {
   :root {
-    --dock-item-h: 64px;
-    --dock-icon: 28px;
-    --dock-item-radius: 14px;
+    --dock-item-h: 58px;
+    --dock-icon: 25px;
+    --dock-item-radius: 13px;
 
-    --dock-pad: 7px;
-    --dock-gap: 3px;
-    --dock-radius: 19px;
+    --dock-pad: 6px;
+    --dock-gap: 2px;
+    --dock-radius: 18px;
     --dock-offset: 8px;
     --dock-side: 12px;
   }
@@ -378,13 +397,13 @@ body.dark .site-nav {
 
 @media (max-width: 600px) {
   :root {
-    --dock-item-h: 60px;
-    --dock-icon: 27px;
-    --dock-item-radius: 13px;
+    --dock-item-h: 56px;
+    --dock-icon: 24px;
+    --dock-item-radius: 12px;
 
-    --dock-pad: 6px;
+    --dock-pad: 5px;
     --dock-gap: 2px;
-    --dock-radius: 18px;
+    --dock-radius: 17px;
     --dock-offset: 7px;
     --dock-side: 10px;
   }
@@ -397,13 +416,13 @@ body.dark .site-nav {
 
 @media (max-width: 420px) {
   :root {
-    --dock-item-h: 56px;
-    --dock-icon: 25px;
-    --dock-item-radius: 12px;
+    --dock-item-h: 52px;
+    --dock-icon: 23px;
+    --dock-item-radius: 11px;
 
     --dock-pad: 5px;
     --dock-gap: 1px;
-    --dock-radius: 17px;
+    --dock-radius: 16px;
     --dock-offset: 6px;
     --dock-side: 8px;
   }
@@ -412,10 +431,6 @@ body.dark .site-nav {
     display: none;
   }
 
-  .dock-item.active::after,
-  .dock-item[aria-current="page"]::after {
-    bottom: 5px;
-  }
 }
 
 
@@ -425,13 +440,13 @@ body.dark .site-nav {
 
 @media (max-width: 360px) {
   :root {
-    --dock-item-h: 52px;
-    --dock-icon: 23px;
-    --dock-item-radius: 11px;
+    --dock-item-h: 48px;
+    --dock-icon: 22px;
+    --dock-item-radius: 10px;
 
     --dock-pad: 4px;
     --dock-gap: 0px;
-    --dock-radius: 16px;
+    --dock-radius: 15px;
     --dock-offset: 5px;
     --dock-side: 6px;
   }

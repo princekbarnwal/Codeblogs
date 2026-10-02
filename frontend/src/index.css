@@ -45,7 +45,16 @@
 
   /* Layout */
   --gutter: 24px;
-  --dock-space: 86px;
+  --page-w: 1120px; /* hero, list, footer all share this edge */
+
+  /* Shadows are tinted with the brand green instead of plain black */
+  --shadow-rgb: 1 45 29;
+  --shadow-soft:
+    0 1px 2px rgb(var(--shadow-rgb) / 0.06),
+    0 18px 36px -26px rgb(var(--shadow-rgb) / 0.2);
+  --shadow-lift:
+    0 2px 4px rgb(var(--shadow-rgb) / 0.08),
+    0 24px 48px -26px rgb(var(--shadow-rgb) / 0.3);
 }
 
 *,
@@ -57,17 +66,18 @@
 /*
    The page scrolls only inside the area above the fixed Dock.
 
-   Desktop dock:
-   52px item + 14px vertical padding + 2px border + 18px bottom offset
-   = 86px reserved zone (see --dock-space)
+   --dock-space is defined in navbar.css (item height + padding + border
+   + offset), so the dock and this reserved zone always match. The 86px
+   fallback is the desktop value, used only if navbar.css fails to load.
 */
 #root {
-  height: calc(100vh - var(--dock-space));
-  height: calc(100dvh - var(--dock-space));
+  height: calc(100vh - var(--dock-space, 86px));
+  height: calc(100dvh - var(--dock-space, 86px));
 
   overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior: contain;
+  scrollbar-gutter: stable;
 
   border-bottom: 1px solid var(--line);
 
@@ -79,18 +89,6 @@
   /* #root is the element that scrolls, so smooth scrolling belongs here */
   #root {
     scroll-behavior: smooth;
-  }
-}
-
-@media (max-width: 780px) {
-  :root {
-    --dock-space: 74px;
-  }
-}
-
-@media (max-width: 420px) {
-  :root {
-    --dock-space: 66px;
   }
 }
 
@@ -111,6 +109,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  font-optical-sizing: auto;
 }
 
 ::selection {
@@ -142,6 +141,43 @@ video {
   height: auto;
 }
 
+/* The one page-load moment: headers rise in, one after another */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.blogs-hero > *,
+.articles-hero > *,
+.article-header > *,
+.article-details-header > *,
+.create-header > *,
+.profile-header > * {
+  animation: rise 0.6s var(--ease) both;
+}
+
+.blogs-hero > :nth-child(2),
+.articles-hero > :nth-child(2),
+.article-header > :nth-child(2),
+.article-details-header > :nth-child(2),
+.create-header > :nth-child(2),
+.profile-header > :nth-child(2) {
+  animation-delay: 0.09s;
+}
+
+.article-header > :nth-child(n + 3),
+.article-details-header > :nth-child(n + 3),
+.create-header > :nth-child(n + 3),
+.profile-header > :nth-child(n + 3) {
+  animation-delay: 0.18s;
+}
+
 /* One consistent, visible keyboard focus for everything clickable */
 :where(a, button, summary, [role="button"]):focus-visible {
   outline: 2px solid var(--green);
@@ -154,6 +190,7 @@ video {
    DARK MODE
    ========================================================= */
 
+:root.dark,
 body.dark {
   color-scheme: dark;
 
@@ -166,6 +203,8 @@ body.dark {
   --primary: #bde8cd;
   --green: #83d7ac;
   --sage: #274d38;
+
+  --shadow-rgb: 0 0 0;
 
   --forest: #83d7ac;
   --forest-deep: #a6e6c4;
@@ -189,6 +228,7 @@ body.dark {
    ========================================================= */
 
 .site-footer {
+  position: relative;
   margin-top: auto;
   padding: 48px var(--gutter) 28px;
 
@@ -197,7 +237,7 @@ body.dark {
 }
 
 .footer-inner {
-  width: min(1280px, 100%);
+  width: min(var(--page-w), 100%);
   margin: auto;
 }
 
@@ -251,7 +291,7 @@ body.dark {
 .article-details-category {
   color: var(--green);
 
-  font: 500 10px/1.4 var(--font-mono);
+  font: 500 11px/1.4 var(--font-mono);
   letter-spacing: 0.12em;
 }
 
@@ -269,11 +309,14 @@ body.dark {
   background: var(--primary);
   color: var(--surface);
 
-  padding: 12px 17px;
+  padding: 13px 20px;
 
   font-size: 12px;
   font-weight: 600;
   line-height: 1.2;
+  letter-spacing: 0.02em;
+
+  box-shadow: 0 1px 2px rgb(var(--shadow-rgb) / 0.18);
 
   cursor: pointer;
 
@@ -290,7 +333,7 @@ body.dark {
   background: var(--green);
   border-color: var(--green);
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px -8px color-mix(in srgb, var(--primary) 55%, transparent);
+  box-shadow: 0 8px 18px -10px rgb(var(--shadow-rgb) / 0.45);
 }
 
 .editorial-button:active,
@@ -312,24 +355,32 @@ body.dark {
 .text-link,
 .back-link,
 .back-to-blogs,
-.back-to-articles {
+.back-to-articles,
+.read-blog,
+.read-article,
+.further-reading-link {
+  width: fit-content;
+  padding-bottom: 3px;
+
   color: var(--primary);
 
   font-size: 12px;
   font-weight: 600;
 
-  text-decoration: underline;
-  text-decoration-color: transparent;
-  text-underline-offset: 4px;
+  /* underline that draws itself from left to right */
+  background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 0 1px;
 
-  transition: text-decoration-color var(--speed) var(--ease);
+  transition: background-size 0.35s var(--ease), color var(--speed) var(--ease);
 }
 
 .text-link:hover,
 .back-link:hover,
 .back-to-blogs:hover,
-.back-to-articles:hover {
-  text-decoration-color: currentColor;
+.back-to-articles:hover,
+.read-blog:hover,
+.read-article:hover,
+.further-reading-link:hover {
+  background-size: 100% 1px;
 }
 
 
@@ -344,8 +395,11 @@ body.dark {
 
 .blogs-hero,
 .articles-hero {
-  width: min(1280px, calc(100% - var(--gutter) * 2));
-  min-height: 370px;
+  position: relative;
+  isolation: isolate;
+
+  width: min(var(--page-w), calc(100% - var(--gutter) * 2));
+  min-height: 320px;
   margin: auto;
 
   display: flex;
@@ -361,7 +415,7 @@ body.dark {
 
   color: var(--primary);
 
-  font: 500 clamp(42px, 5vw, 68px)/1 var(--font-serif);
+  font: 500 clamp(40px, 5.4vw, 68px)/1.02 var(--font-serif);
   letter-spacing: -0.045em;
   text-wrap: balance;
 }
@@ -380,7 +434,7 @@ body.dark {
 
 .blogs-content,
 .articles-content {
-  width: min(1120px, calc(100% - var(--gutter) * 2));
+  width: min(var(--page-w), calc(100% - var(--gutter) * 2));
   margin: auto;
 
   padding: 40px 0;
@@ -388,6 +442,8 @@ body.dark {
 
 .blogs-heading,
 .articles-heading {
+  position: relative;
+
   display: flex;
   align-items: end;
   justify-content: space-between;
@@ -397,6 +453,20 @@ body.dark {
   padding-bottom: 24px;
 
   border-bottom: 1px solid var(--line);
+}
+
+.blogs-heading::after,
+.articles-heading::after {
+  content: "";
+
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+
+  width: 64px;
+  height: 2px;
+
+  background: var(--green);
 }
 
 .blogs-heading h2,
@@ -413,7 +483,7 @@ body.dark {
 .articles-count {
   color: var(--muted);
 
-  font: 500 10px var(--font-mono);
+  font: 500 11px var(--font-mono);
   font-variant-numeric: tabular-nums;
 }
 
@@ -424,11 +494,13 @@ body.dark {
 
   gap: 24px;
 
-  padding: 32px 16px;
+  padding: 36px 0;
 
   border-bottom: 1px solid var(--line);
 
-  transition: background-color var(--speed) var(--ease);
+  /* long archives: the browser skips drawing entries far off-screen */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 190px;
 }
 
 /* Lets long titles wrap instead of pushing the grid wider than the screen */
@@ -437,24 +509,14 @@ body.dark {
   min-width: 0;
 }
 
-.blog-item:hover,
-.article-item:hover {
-  background: var(--paper-soft);
-}
-
 .blog-number,
 .article-number {
+  padding-top: 4px;
+
   color: var(--muted);
 
   font: 500 11px var(--font-mono);
   font-variant-numeric: tabular-nums;
-
-  transition: color var(--speed) var(--ease);
-}
-
-.blog-item:hover .blog-number,
-.article-item:hover .article-number {
-  color: var(--green);
 }
 
 .blog-meta,
@@ -465,7 +527,7 @@ body.dark {
 
   color: var(--green);
 
-  font: 500 10px var(--font-mono);
+  font: 500 11px var(--font-mono);
   letter-spacing: 0.08em;
 }
 
@@ -480,6 +542,13 @@ body.dark {
   letter-spacing: -0.03em;
   text-wrap: balance;
   overflow-wrap: anywhere;
+
+  transition: color var(--speed) var(--ease);
+}
+
+.blog-item:hover h3,
+.article-item:hover h3 {
+  color: var(--green);
 }
 
 .blog-item p,
@@ -498,24 +567,7 @@ body.dark {
 .read-blog,
 .read-article {
   display: block;
-  width: fit-content;
   margin-top: 17px;
-
-  color: var(--primary);
-
-  font-size: 12px;
-  font-weight: 600;
-
-  text-decoration: underline;
-  text-decoration-color: transparent;
-  text-underline-offset: 4px;
-
-  transition: text-decoration-color var(--speed) var(--ease);
-}
-
-.read-blog:hover,
-.read-article:hover {
-  text-decoration-color: currentColor;
 }
 
 .empty-blogs,
@@ -559,7 +611,7 @@ body.dark {
 
   color: var(--primary);
 
-  font: 500 clamp(42px, 6vw, 72px)/1 var(--font-serif);
+  font: 500 clamp(38px, 5.6vw, 64px)/1.02 var(--font-serif);
   letter-spacing: -0.05em;
   text-wrap: balance;
   overflow-wrap: anywhere;
@@ -581,6 +633,8 @@ body.dark {
 
 .article-divider,
 .article-details-divider {
+  position: relative;
+
   height: 1px;
   background: var(--line);
 }
@@ -596,19 +650,21 @@ body.dark {
 
 .article-body p,
 .article-details-body p {
-  margin: 0 0 25px;
+  margin: 0 0 26px;
 
   color: var(--ink);
 
-  font-size: 18px;
-  line-height: 1.85;
+  /* long reading is set in the serif: slightly larger, more open leading */
+  font: 400 var(--reader-size, 20px)/1.78 var(--reader-font, var(--font-serif));
+  font-feature-settings: "liga", "kern", "onum";
   text-wrap: pretty;
   overflow-wrap: anywhere;
 }
 
 .article-body p:first-child,
 .article-details-body p:first-child {
-  font: 500 21px/1.65 var(--font-serif);
+  color: var(--primary);
+  font: 400 calc(var(--reader-size, 20px) + 3px)/1.62 var(--reader-font, var(--font-serif));
 }
 
 /* Rich content, in case a post contains more than plain paragraphs */
@@ -647,8 +703,9 @@ body.dark {
   margin: 0 0 25px;
   padding-left: 1.4em;
 
-  font-size: 18px;
-  line-height: 1.85;
+  font-family: var(--reader-font, var(--font-serif));
+  font-size: var(--reader-size, 20px);
+  line-height: 1.78;
 }
 
 .article-body img,
@@ -696,41 +753,31 @@ body.dark {
 .further-reading {
   max-width: 720px;
 
-  margin: 20px auto;
-  padding: 20px;
+  margin: 28px auto;
+  padding: 22px 24px;
+
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--green);
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
 
   background: var(--paper-soft);
-
-  border-left: 3px solid var(--green);
 }
 
 .further-reading-label {
   color: var(--muted);
 
-  font: 500 9px var(--font-mono);
+  font: 500 11px var(--font-mono);
   letter-spacing: 0.1em;
 }
 
 .further-reading-link {
   display: block;
-  width: fit-content;
+  margin-top: 10px;
 
-  margin-top: 9px;
-
-  color: var(--primary);
-
-  font-weight: 600;
-  font-size: 13px;
-
-  text-decoration: underline;
-  text-decoration-color: transparent;
-  text-underline-offset: 4px;
-
-  transition: text-decoration-color var(--speed) var(--ease);
-}
-
-.further-reading-link:hover {
-  text-decoration-color: currentColor;
+  font-family: var(--font-serif);
+  font-size: 19px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
 }
 
 
@@ -906,7 +953,7 @@ body.dark {
 
   color: var(--primary);
 
-  font: 500 clamp(42px, 6vw, 68px)/1 var(--font-serif);
+  font: 500 clamp(38px, 5.2vw, 60px)/1.02 var(--font-serif);
   letter-spacing: -0.05em;
   text-wrap: balance;
 }
@@ -920,11 +967,14 @@ body.dark {
 
 .blog-form,
 .article-form {
-  padding: 32px;
+  padding: 36px;
 
   border: 1px solid var(--line);
+  border-radius: 10px;
 
   background: var(--paper);
+
+  box-shadow: var(--shadow-soft);
 }
 
 .form-group {
@@ -940,6 +990,7 @@ body.dark {
 
   font-size: 12px;
   font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
 .form-group input,
@@ -948,12 +999,12 @@ body.dark {
   width: 100%;
 
   border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
+  border-radius: 6px;
 
   background: var(--surface);
   color: var(--ink);
 
-  padding: 12px;
+  padding: 13px 14px;
 
   outline: none;
 
@@ -963,7 +1014,7 @@ body.dark {
 .form-group input::placeholder,
 .form-group textarea::placeholder {
   color: var(--muted);
-  opacity: 0.65;
+  opacity: 0.85;
 }
 
 .form-group input:focus,
@@ -982,11 +1033,12 @@ body.dark {
 }
 
 .form-group textarea {
-  min-height: 330px;
+  min-height: 360px;
 
   resize: vertical;
 
-  line-height: 1.7;
+  font-size: 16px;
+  line-height: 1.75;
 }
 
 .form-footer {
@@ -1082,7 +1134,7 @@ body.dark {
 
   color: var(--primary);
 
-  font: 500 clamp(42px, 6vw, 64px)/1 var(--font-serif);
+  font: 500 clamp(38px, 5vw, 56px)/1.02 var(--font-serif);
   letter-spacing: -0.05em;
   overflow-wrap: anywhere;
 }
@@ -1104,8 +1156,11 @@ body.dark {
 }
 
 .profile-stats strong {
-  font-size: 20px;
+  color: var(--green);
+
+  font: 500 30px/1 var(--font-serif);
   font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
 }
 
 .latest-profile-blog {
@@ -1241,7 +1296,7 @@ body.dark {
 
 .blog-search input::placeholder {
   color: var(--muted);
-  opacity: 0.65;
+  opacity: 0.85;
 }
 
 .blog-search input:focus {
@@ -1357,7 +1412,7 @@ body.dark {
 
     gap: 12px;
 
-    padding: 26px 8px;
+    padding: 28px 0;
   }
 
   .article-header,
@@ -1370,23 +1425,15 @@ body.dark {
     padding-top: 34px;
   }
 
-  .article-body p,
-  .article-details-body p,
-  .article-body ul,
-  .article-body ol,
-  .article-details-body ul,
-  .article-details-body ol {
-    font-size: 16px;
-  }
-
-  .article-body p:first-child,
-  .article-details-body p:first-child {
-    font-size: 19px;
+  /* phones start one step smaller; the reader's own choice (inline) still wins */
+  .article-body,
+  .article-details-body {
+    --reader-size: 18px;
   }
 
   .blog-form,
   .article-form {
-    padding: 22px;
+    padding: 24px;
   }
 
   .site-footer {
@@ -1458,6 +1505,1451 @@ body.dark {
 
 
 /* =========================================================
+   EVERYDAY TOOLS  (reading, writing, finding, feedback)
+
+   These are ready-made classes. Add them to your markup
+   (the class names are listed in the comment above each block)
+   and the look is already done. Colors are the same tokens
+   as the rest of the site.
+   ========================================================= */
+
+/* ---------- keyboard keys: <kbd>Ctrl</kbd> <kbd>K</kbd> ---------- */
+
+kbd {
+  display: inline-block;
+
+  min-width: 20px;
+  padding: 2px 6px;
+
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+
+  background: var(--paper);
+  color: var(--muted);
+
+  font: 500 11px/1.4 var(--font-mono);
+  text-align: center;
+}
+
+
+/* ---------------------------------------------------------
+   READING PROGRESS BAR
+   Markup: <div class="reading-progress"></div> as the first
+   child inside the article page.
+   Chrome/Edge/Safari fill it with pure CSS. For other
+   browsers, set  el.style.setProperty("--progress", 0..1)
+   from a scroll listener on #root.
+   --------------------------------------------------------- */
+
+.reading-progress {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+
+  height: 3px;
+  margin-bottom: -3px;
+
+  pointer-events: none;
+}
+
+.reading-progress::before {
+  content: "";
+
+  display: block;
+  height: 100%;
+
+  background: var(--green);
+
+  transform-origin: 0 50%;
+  transform: scaleX(var(--progress, 0));
+}
+
+@supports (animation-timeline: scroll()) {
+  .reading-progress::before {
+    transform: scaleX(0);
+
+    animation: progress-grow linear both;
+    animation-timeline: scroll(nearest block);
+  }
+}
+
+@keyframes progress-grow {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* "8 min read" next to the date:  <span class="reading-time">8 min read</span> */
+.reading-time {
+  color: var(--green);
+
+  font: 500 11px var(--font-mono);
+  letter-spacing: 0.04em;
+}
+
+
+/* ---------------------------------------------------------
+   ARTICLE HEADINGS + ANCHORS
+   Markup: <h2 id="setup">Setup <a class="heading-anchor" href="#setup">#</a></h2>
+   --------------------------------------------------------- */
+
+.article-body h2,
+.article-details-body h2,
+.article-body h3,
+.article-details-body h3,
+.article-body h4,
+.article-details-body h4 {
+  position: relative;
+
+  margin: 56px 0 18px;
+
+  color: var(--primary);
+
+  font-family: var(--font-serif);
+  font-weight: 500;
+  line-height: 1.12;
+  text-wrap: balance;
+
+  /* so a jump-to-section lands with breathing room */
+  scroll-margin-top: 28px;
+}
+
+.article-body h2,
+.article-details-body h2 {
+  font-size: clamp(28px, 3.4vw, 36px);
+  letter-spacing: -0.035em;
+}
+
+.article-body h3,
+.article-details-body h3 {
+  margin-top: 40px;
+
+  font-size: clamp(22px, 2.6vw, 27px);
+  letter-spacing: -0.025em;
+}
+
+.article-body h4,
+.article-details-body h4 {
+  margin-top: 32px;
+
+  color: var(--green);
+
+  font: 500 11px/1.4 var(--font-mono);
+  letter-spacing: 0.12em;
+}
+
+.heading-anchor {
+  margin-left: 0.4em;
+
+  color: var(--green);
+
+  font-family: var(--font-mono);
+  font-size: 0.6em;
+  font-weight: 400;
+  text-decoration: none;
+
+  opacity: 0;
+  transition: opacity var(--speed) var(--ease);
+}
+
+h2:hover > .heading-anchor,
+h3:hover > .heading-anchor,
+h4:hover > .heading-anchor,
+.heading-anchor:focus-visible {
+  opacity: 1;
+}
+
+
+/* ---------------------------------------------------------
+   CODE BLOCKS
+   Markup:
+   <div class="code-block">
+     <div class="code-block-header">
+       <span class="code-lang">javascript</span>
+       <button class="copy-button" type="button">Copy</button>
+     </div>
+     <pre><code>…</code></pre>
+   </div>
+   Add .is-copied to the button for a moment after copying.
+   Works with highlight.js (hljs-*) and Prism (token *) colors.
+   --------------------------------------------------------- */
+
+.code-block {
+  margin: 0 0 28px;
+
+  overflow: hidden;
+
+  border: 1px solid var(--line);
+  border-radius: 10px;
+
+  background: var(--paper-soft);
+
+  box-shadow: var(--shadow-soft);
+}
+
+.code-block-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  padding: 8px 10px 8px 16px;
+
+  border-bottom: 1px solid var(--line);
+
+  background: color-mix(in srgb, var(--paper) 65%, var(--paper-soft));
+}
+
+.code-lang {
+  color: var(--green);
+
+  font: 500 11px var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.copy-button {
+  padding: 5px 11px;
+
+  border: 1px solid var(--line);
+  border-radius: 6px;
+
+  background: transparent;
+  color: var(--muted);
+
+  font: 500 11px var(--font-mono);
+
+  cursor: pointer;
+
+  transition:
+    color var(--speed) var(--ease),
+    border-color var(--speed) var(--ease),
+    background-color var(--speed) var(--ease);
+}
+
+.copy-button:hover {
+  border-color: var(--green);
+  color: var(--primary);
+}
+
+.copy-button.is-copied {
+  border-color: var(--green);
+  background: var(--sage);
+  color: var(--primary);
+}
+
+.code-block pre {
+  margin: 0;
+  padding: 18px 20px;
+
+  border: 0;
+  border-radius: 0;
+
+  background: transparent;
+
+  tab-size: 2;
+}
+
+/* inline `code` becomes a soft sage chip */
+.article-body :not(pre) > code,
+.article-details-body :not(pre) > code {
+  padding: 0.12em 0.42em;
+
+  border-radius: 5px;
+
+  background: color-mix(in srgb, var(--sage) 70%, transparent);
+  color: var(--primary);
+}
+
+/* syntax colors, all built from the site palette */
+.hljs-comment,
+.hljs-quote,
+.token.comment,
+.token.prolog {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-literal,
+.token.keyword,
+.token.atrule,
+.token.boolean {
+  color: var(--green);
+  font-weight: 500;
+}
+
+.hljs-string,
+.hljs-attr,
+.hljs-template-variable,
+.token.string,
+.token.attr-value {
+  color: color-mix(in srgb, var(--green) 65%, var(--ink));
+}
+
+.hljs-number,
+.hljs-symbol,
+.token.number,
+.token.constant {
+  color: color-mix(in srgb, var(--error) 75%, var(--ink));
+}
+
+.hljs-title,
+.hljs-function,
+.hljs-section,
+.token.function,
+.token.class-name {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.hljs-built_in,
+.hljs-type,
+.hljs-variable,
+.token.builtin,
+.token.property {
+  color: color-mix(in srgb, var(--primary) 80%, var(--green));
+}
+
+.hljs-punctuation,
+.token.punctuation,
+.token.operator {
+  color: var(--muted);
+}
+
+
+/* ---------------------------------------------------------
+   CALLOUTS
+   Markup: <aside class="callout callout-tip">
+             <p class="callout-title">TIP</p>
+             <p>Text…</p>
+           </aside>
+   Types: callout-note (default), callout-tip, callout-warning
+   --------------------------------------------------------- */
+
+.callout {
+  --callout: var(--green);
+
+  margin: 0 0 28px;
+  padding: 16px 22px;
+
+  border: 1px solid color-mix(in srgb, var(--callout) 25%, transparent);
+  border-left: 3px solid var(--callout);
+  border-radius: 0 10px 10px 0;
+
+  background: color-mix(in srgb, var(--callout) 7%, var(--paper));
+}
+
+.callout-tip {
+  --callout: var(--forest);
+}
+
+.callout-warning,
+.callout-danger {
+  --callout: var(--error);
+}
+
+.callout-title {
+  margin: 0 0 6px !important;
+
+  color: var(--callout);
+
+  font: 500 11px/1.4 var(--font-mono) !important;
+  letter-spacing: 0.12em;
+}
+
+.callout p {
+  margin-bottom: 10px;
+
+  font-size: calc(var(--reader-size, 20px) - 3px);
+  line-height: 1.65;
+}
+
+.callout > :last-child {
+  margin-bottom: 0;
+}
+
+
+/* ---------------------------------------------------------
+   TABLE OF CONTENTS  (wide screens: floats in the right margin)
+   Markup: put <nav class="toc"> inside a wrapper that has
+   class="article-with-toc", next to the article text.
+   <nav class="toc"><div class="toc-inner">
+     <p class="toc-title">ON THIS PAGE</p>
+     <a href="#setup" class="is-active">Setup</a> …
+   </div></nav>
+   Add .is-active to the link of the section being read.
+   --------------------------------------------------------- */
+
+.article-with-toc {
+  position: relative;
+}
+
+.toc {
+  display: none;
+}
+
+@media (min-width: 1320px) {
+  .toc {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc(100% + 40px);
+
+    display: block;
+    width: 210px;
+  }
+
+  .toc-inner {
+    position: sticky;
+    top: 32px;
+  }
+}
+
+.toc-title {
+  margin: 0 0 14px;
+
+  color: var(--muted);
+
+  font: 500 11px var(--font-mono);
+  letter-spacing: 0.12em;
+}
+
+.toc a {
+  display: block;
+
+  padding: 6px 0 6px 14px;
+
+  border-left: 1px solid var(--line);
+
+  color: var(--muted);
+
+  font-size: 12px;
+  line-height: 1.45;
+
+  transition:
+    color var(--speed) var(--ease),
+    border-color var(--speed) var(--ease);
+}
+
+.toc a:hover {
+  color: var(--primary);
+}
+
+.toc a.is-active {
+  border-left-color: var(--green);
+  color: var(--green);
+  font-weight: 600;
+}
+
+
+/* ---------------------------------------------------------
+   READER CONTROLS  ("Aa" menu: text size and font)
+   Markup:
+   <div class="reader-controls is-open?">
+     <button class="reader-toggle" aria-expanded="false">Aa</button>
+     <div class="reader-panel">
+       <div class="reader-row">
+         <span class="reader-label">SIZE</span>
+         <div class="reader-segment"><button aria-pressed="true">A</button>…</div>
+       </div>
+     </div>
+   </div>
+   Then set  data-size="sm|md|lg|xl"  and  data-font="serif|sans"
+   on the article body element.
+   --------------------------------------------------------- */
+
+.article-body[data-size="sm"],
+.article-details-body[data-size="sm"] {
+  --reader-size: 18px;
+}
+
+.article-body[data-size="lg"],
+.article-details-body[data-size="lg"] {
+  --reader-size: 22px;
+}
+
+.article-body[data-size="xl"],
+.article-details-body[data-size="xl"] {
+  --reader-size: 24px;
+}
+
+.article-body[data-font="sans"],
+.article-details-body[data-font="sans"] {
+  --reader-font: var(--font-sans);
+}
+
+.reader-controls {
+  position: relative;
+}
+
+.reader-toggle {
+  width: 38px;
+  height: 38px;
+
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+
+  background: var(--paper);
+  color: var(--primary);
+
+  font: 500 15px var(--font-serif);
+
+  cursor: pointer;
+
+  transition:
+    border-color var(--speed) var(--ease),
+    background-color var(--speed) var(--ease);
+}
+
+.reader-toggle:hover,
+.reader-toggle[aria-expanded="true"] {
+  border-color: var(--green);
+  background: var(--paper-soft);
+}
+
+.reader-panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 70;
+
+  width: 250px;
+  padding: 14px 16px;
+
+  border: 1px solid var(--line);
+  border-radius: 12px;
+
+  background: var(--paper);
+
+  box-shadow: var(--shadow-lift);
+
+  opacity: 0;
+  visibility: hidden;
+
+  transform: translateY(-6px) scale(0.98);
+  transform-origin: top right;
+
+  transition:
+    opacity 0.2s var(--ease),
+    transform 0.2s var(--ease),
+    visibility 0.2s;
+}
+
+.reader-controls.is-open .reader-panel,
+.reader-toggle[aria-expanded="true"] + .reader-panel {
+  opacity: 1;
+  visibility: visible;
+
+  transform: none;
+}
+
+.reader-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  padding: 6px 0;
+}
+
+.reader-label {
+  color: var(--muted);
+
+  font: 500 11px var(--font-mono);
+  letter-spacing: 0.12em;
+}
+
+.reader-segment {
+  display: inline-flex;
+  gap: 2px;
+
+  padding: 3px;
+
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+
+  background: var(--paper-soft);
+}
+
+.reader-segment button {
+  min-width: 34px;
+  height: 28px;
+
+  padding: 0 8px;
+
+  border: 0;
+  border-radius: 6px;
+
+  background: transparent;
+  color: var(--muted);
+
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background-color var(--speed) var(--ease),
+    color var(--speed) var(--ease);
+}
+
+.reader-segment button[aria-pressed="true"] {
+  background: var(--paper);
+  color: var(--primary);
+
+  box-shadow: 0 1px 2px rgb(var(--shadow-rgb) / 0.14);
+}
+
+
+/* ---------------------------------------------------------
+   EDITOR  (toolbar, live preview, save status, focus mode)
+   Markup:
+   <div class="create-container is-split">
+     <div class="editor-toolbar"><button class="editor-tool">B</button>…</div>
+     <div class="editor-split">
+       <div class="editor-pane">…textarea…</div>
+       <div class="preview-pane article-body">…rendered…</div>
+     </div>
+     <div class="editor-status">
+       <span class="save-indicator" data-state="saved">Saved</span>
+       <span>428 words</span>
+     </div>
+   </div>
+   Add .is-focus to .create-page for distraction-free writing.
+   --------------------------------------------------------- */
+
+.create-container.is-split {
+  width: min(1280px, calc(100% - var(--gutter) * 2));
+}
+
+.editor-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+
+  align-items: start;
+}
+
+.editor-pane,
+.preview-pane {
+  min-width: 0;
+}
+
+.preview-pane {
+  min-height: 360px;
+  max-height: 70vh;
+
+  padding: 28px 32px;
+
+  overflow: auto;
+
+  border: 1px solid var(--line);
+  border-radius: 10px;
+
+  background: var(--paper);
+
+  box-shadow: var(--shadow-soft);
+}
+
+.preview-pane > :first-child {
+  margin-top: 0;
+}
+
+@media (max-width: 1000px) {
+  .editor-split {
+    grid-template-columns: 1fr;
+  }
+}
+
+.editor-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+
+  margin-bottom: 12px;
+  padding: 6px;
+
+  border: 1px solid var(--line);
+  border-radius: 10px;
+
+  background: var(--paper-soft);
+}
+
+.editor-tool {
+  min-width: 34px;
+  height: 34px;
+
+  padding: 0 8px;
+
+  border: 0;
+  border-radius: 7px;
+
+  background: transparent;
+  color: var(--muted);
+
+  font: 600 13px var(--font-mono);
+
+  cursor: pointer;
+
+  transition:
+    background-color var(--speed) var(--ease),
+    color var(--speed) var(--ease);
+}
+
+.editor-tool:hover {
+  background: var(--paper);
+  color: var(--primary);
+}
+
+.editor-tool[aria-pressed="true"] {
+  background: var(--sage);
+  color: var(--primary);
+}
+
+.editor-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 18px;
+
+  margin-top: 14px;
+
+  color: var(--muted);
+
+  font: 500 11px var(--font-mono);
+}
+
+.save-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.save-indicator::before {
+  content: "";
+
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: var(--line);
+}
+
+.save-indicator[data-state="saving"]::before {
+  background: var(--green);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+.save-indicator[data-state="saved"]::before {
+  background: var(--green);
+}
+
+.save-indicator[data-state="error"]::before {
+  background: var(--error-solid);
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* focus mode: everything quiet except the page itself */
+.create-header,
+.form-footer,
+.editor-toolbar {
+  transition: opacity 0.4s var(--ease);
+}
+
+.create-page.is-focus .create-header,
+.create-page.is-focus .editor-toolbar,
+.create-page.is-focus .form-footer {
+  opacity: 0.18;
+}
+
+.create-page.is-focus .create-header:hover,
+.create-page.is-focus .editor-toolbar:hover,
+.create-page.is-focus .form-footer:hover,
+.create-page.is-focus:focus-within .form-footer {
+  opacity: 1;
+}
+
+
+/* ---------------------------------------------------------
+   TAGS, FILTERS, STATUS, BOOKMARK
+   <span class="tag">react</span>   <span class="tag is-active">…</span>
+   <div class="filter-bar"> tags… </div>
+   <span class="status-badge" data-status="draft|published">Draft</span>
+   <button class="bookmark-btn" aria-pressed="true">…svg…</button>
+   --------------------------------------------------------- */
+
+.tag-list,
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.filter-bar {
+  margin: 0 0 24px;
+  padding-bottom: 4px;
+}
+
+@media (max-width: 700px) {
+  /* one swipeable row on phones */
+  .filter-bar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+
+    scrollbar-width: none;
+  }
+
+  .filter-bar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.tag {
+  flex-shrink: 0;
+
+  padding: 5px 11px;
+
+  border: 1px solid var(--line);
+  border-radius: 999px;
+
+  background: transparent;
+  color: var(--muted);
+
+  font: 500 11px/1.2 var(--font-mono);
+  letter-spacing: 0.06em;
+
+  cursor: pointer;
+
+  transition:
+    background-color var(--speed) var(--ease),
+    border-color var(--speed) var(--ease),
+    color var(--speed) var(--ease);
+}
+
+.tag:hover {
+  border-color: var(--green);
+  color: var(--primary);
+}
+
+.tag.is-active {
+  border-color: var(--green);
+  background: var(--sage);
+  color: var(--primary);
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  padding: 4px 10px;
+
+  border: 1px solid var(--line);
+  border-radius: 999px;
+
+  color: var(--muted);
+
+  font: 500 11px/1.2 var(--font-mono);
+  letter-spacing: 0.08em;
+}
+
+.status-badge::before {
+  content: "";
+
+  width: 6px;
+  height: 6px;
+
+  border-radius: 50%;
+
+  background: currentColor;
+}
+
+.status-badge[data-status="published"] {
+  border-color: color-mix(in srgb, var(--green) 35%, transparent);
+  background: color-mix(in srgb, var(--sage) 60%, transparent);
+  color: var(--green);
+}
+
+.bookmark-btn {
+  display: inline-grid;
+  place-items: center;
+
+  width: 38px;
+  height: 38px;
+
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+
+  background: var(--paper);
+  color: var(--muted);
+
+  cursor: pointer;
+
+  transition:
+    color var(--speed) var(--ease),
+    border-color var(--speed) var(--ease),
+    transform var(--speed) var(--ease);
+}
+
+.bookmark-btn:hover {
+  border-color: var(--green);
+  color: var(--primary);
+}
+
+.bookmark-btn:active {
+  transform: scale(0.92);
+}
+
+.bookmark-btn svg {
+  width: 18px;
+  height: 18px;
+
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.bookmark-btn[aria-pressed="true"] {
+  border-color: var(--green);
+  color: var(--green);
+}
+
+.bookmark-btn[aria-pressed="true"] svg {
+  fill: currentColor;
+}
+
+
+/* ---------------------------------------------------------
+   COMMAND PALETTE  (Ctrl/Cmd + K)
+   Markup:
+   <div class="palette-overlay">
+     <div class="palette" role="dialog">
+       <input class="palette-input" placeholder="Search posts or jump to…" />
+       <ul class="palette-list">
+         <li class="palette-group">POSTS</li>
+         <li class="palette-item" aria-selected="true">Title <span class="palette-item-hint">↵</span></li>
+       </ul>
+       <div class="palette-footer"><span><kbd>↑</kbd><kbd>↓</kbd> move</span>…</div>
+     </div>
+   </div>
+   --------------------------------------------------------- */
+
+.palette-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+
+  display: grid;
+  place-items: start center;
+
+  padding: 14vh 16px 16px;
+
+  background: rgb(var(--shadow-rgb) / 0.38);
+
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+
+  animation: fade-in 0.2s var(--ease) both;
+}
+
+.palette {
+  display: flex;
+  flex-direction: column;
+
+  width: min(600px, 100%);
+  max-height: min(520px, 70vh);
+
+  overflow: hidden;
+
+  border: 1px solid var(--line);
+  border-radius: 14px;
+
+  background: var(--paper);
+
+  box-shadow: var(--shadow-lift);
+
+  animation: pop-in 0.25s var(--ease) both;
+}
+
+.palette-input {
+  width: 100%;
+
+  padding: 18px 22px;
+
+  border: 0;
+  border-bottom: 1px solid var(--line);
+
+  background: transparent;
+  color: var(--ink);
+
+  font: 400 19px var(--font-serif);
+
+  outline: none;
+}
+
+.palette-input::placeholder {
+  color: var(--muted);
+  opacity: 0.6;
+}
+
+.palette-list {
+  flex: 1;
+
+  margin: 0;
+  padding: 8px;
+
+  overflow-y: auto;
+
+  list-style: none;
+}
+
+.palette-group {
+  padding: 12px 12px 5px;
+
+  color: var(--muted);
+
+  font: 500 11px var(--font-mono);
+  letter-spacing: 0.12em;
+}
+
+.palette-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  padding: 10px 12px;
+
+  border-radius: 8px;
+
+  color: var(--ink);
+
+  font-size: 13px;
+
+  cursor: pointer;
+}
+
+.palette-item:hover,
+.palette-item[aria-selected="true"] {
+  background: var(--sage);
+  color: var(--primary);
+}
+
+.palette-item-hint {
+  color: var(--muted);
+
+  font: 500 11px var(--font-mono);
+}
+
+.palette-empty {
+  padding: 28px 12px;
+
+  color: var(--muted);
+
+  font-size: 13px;
+  text-align: center;
+}
+
+.palette-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+
+  padding: 10px 16px;
+
+  border-top: 1px solid var(--line);
+
+  background: var(--paper-soft);
+  color: var(--muted);
+
+  font: 500 11px var(--font-mono);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+  }
+}
+
+
+/* ---------------------------------------------------------
+   TOASTS  ("Saved", "Published", errors)
+   Markup: <div class="toast-region"><div class="toast toast-success">Saved</div></div>
+   Add .is-leaving before removing a toast.
+   --------------------------------------------------------- */
+
+.toast-region {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--dock-space, 86px) + 14px);
+  z-index: 1200;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+
+  width: min(420px, calc(100% - 32px));
+
+  pointer-events: none;
+
+  transform: translateX(-50%);
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 11px 18px;
+
+  border-radius: 10px;
+
+  background: var(--primary);
+  color: var(--surface);
+
+  font-size: 12px;
+  font-weight: 500;
+
+  box-shadow: var(--shadow-lift);
+
+  pointer-events: auto;
+
+  animation: toast-in 0.35s var(--ease) both;
+}
+
+.toast::before {
+  content: "";
+
+  flex-shrink: 0;
+
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: var(--sage);
+}
+
+.toast-error {
+  background: var(--error-solid);
+  color: #fff;
+}
+
+.toast-error::before {
+  background: #fff;
+}
+
+.toast.is-leaving {
+  animation: toast-out 0.25s var(--ease) both;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+}
+
+@keyframes toast-out {
+  to {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+}
+
+
+/* ---------------------------------------------------------
+   SKELETON LOADERS
+   <div class="skeleton skeleton-title"></div>
+   <div class="skeleton skeleton-line"></div>
+   --------------------------------------------------------- */
+
+.skeleton {
+  display: block;
+
+  border-radius: 6px;
+
+  background: linear-gradient(
+    90deg,
+    var(--paper-soft) 25%,
+    color-mix(in srgb, var(--line) 60%, var(--paper-soft)) 50%,
+    var(--paper-soft) 75%
+  );
+  background-size: 200% 100%;
+
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+.skeleton-title {
+  width: 60%;
+  height: 34px;
+
+  margin-bottom: 14px;
+}
+
+.skeleton-line {
+  width: 100%;
+  height: 12px;
+
+  margin-bottom: 10px;
+}
+
+.skeleton-line:last-child {
+  width: 70%;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+
+/* ---------------------------------------------------------
+   EMPTY STATE + 404
+   <div class="empty-state"><h3>No posts yet</h3><p>…</p></div>
+   <div class="not-found"><p class="not-found-code">404</p><h1>…</h1></div>
+   --------------------------------------------------------- */
+
+.empty-state {
+  margin: 40px 0;
+  padding: 56px 24px;
+
+  border: 1px dashed var(--line);
+  border-radius: 14px;
+
+  text-align: center;
+}
+
+.empty-state h3 {
+  margin: 0 0 8px;
+
+  color: var(--primary);
+
+  font: 500 28px/1.1 var(--font-serif);
+  letter-spacing: -0.03em;
+}
+
+.empty-state p {
+  max-width: 420px;
+  margin: 0 auto;
+
+  color: var(--muted);
+
+  font-size: 13px;
+  line-height: 1.7;
+  text-wrap: pretty;
+}
+
+.not-found {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+
+  min-height: 70vh;
+
+  padding: 40px 24px;
+
+  text-align: center;
+}
+
+.not-found-code {
+  margin: 0;
+
+  color: var(--green);
+
+  font: 500 12px var(--font-mono);
+  letter-spacing: 0.3em;
+}
+
+.not-found h1 {
+  margin: 14px 0 12px;
+
+  color: var(--primary);
+
+  font: 500 clamp(48px, 9vw, 104px)/0.95 var(--font-serif);
+  letter-spacing: -0.055em;
+  text-wrap: balance;
+}
+
+
+/* =========================================================
+   PRINT / SAVE AS PDF
+   Hides the dock, buttons and footer, and lets the article
+   flow across pages in plain black on white.
+   ========================================================= */
+
+@media print {
+  @page {
+    margin: 18mm 16mm;
+  }
+
+  /* #root normally scrolls inside a fixed height, which would cut the print */
+  #root {
+    height: auto !important;
+    overflow: visible !important;
+
+    border: 0;
+  }
+
+  body,
+  body.dark,
+  :root.dark body {
+    --surface: #fff;
+    --paper: #fff;
+    --paper-soft: #f4f4f0;
+    --ink: #000;
+    --muted: #444;
+    --line: #ccc;
+    --primary: #012d1d;
+    --green: #006c48;
+
+    background: #fff;
+    color: #000;
+  }
+
+  .site-nav,
+  .site-footer,
+  .reading-progress,
+  .reader-controls,
+  .bookmark-btn,
+  .blog-actions,
+  .delete-panel,
+  .article-footer,
+  .article-details-footer,
+  .toast-region,
+  .toc,
+  .copy-button,
+  .heading-anchor {
+    display: none !important;
+  }
+
+  .article-header > *,
+  .article-details-header > * {
+    animation: none;
+  }
+
+  .article-container,
+  .article-details-container {
+    width: 100%;
+    padding: 0;
+  }
+
+  .article-body p,
+  .article-details-body p {
+    font-size: 11.5pt;
+    line-height: 1.6;
+  }
+
+  .article-body p:first-child,
+  .article-details-body p:first-child {
+    font-size: 13pt;
+  }
+
+  .article-body a[href^="http"]::after,
+  .article-details-body a[href^="http"]::after {
+    content: " (" attr(href) ")";
+
+    color: var(--muted);
+
+    font-size: 0.8em;
+    word-break: break-all;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    break-after: avoid;
+  }
+
+  pre,
+  blockquote,
+  .callout,
+  .code-block,
+  img {
+    break-inside: avoid;
+  }
+
+  .code-block,
+  .callout {
+    box-shadow: none;
+  }
+
+  pre {
+    white-space: pre-wrap;
+  }
+}
+
+
+/* =========================================================
+   HIGH CONTRAST  (Windows contrast themes, "increase contrast")
+   ========================================================= */
+
+@media (forced-colors: active) {
+  .editorial-button,
+  .create-blog-btn,
+  .publish-button,
+  .edit-blog-btn,
+  .delete-blog-btn,
+  .profile-action-link,
+  .profile-logout,
+  .copy-button,
+  .tag,
+  .blog-search button {
+    border: 1px solid ButtonText;
+  }
+
+  .blog-item::after,
+  .article-item::after,
+  .reading-progress::before {
+    background: Highlight;
+  }
+
+  .tag.is-active,
+  .palette-item[aria-selected="true"],
+  .dock-item.active {
+    outline: 2px solid Highlight;
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --muted: #3d4541;
+    --line: #b7bcb4;
+  }
+
+  :root.dark,
+  body.dark {
+    --muted: #d6ded8;
+    --line: #6a7a6f;
+  }
+}
+
+
+/* =========================================================
    REDUCED MOTION
    ========================================================= */
 
@@ -1469,5 +2961,13 @@ body.dark {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+
+  .reading-progress::before {
+    animation-duration: auto !important;
+  }
+
+  .skeleton {
+    animation: none;
   }
 }

@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { API_URL } from "../lib/api";
 import { saveTokens } from "../lib/auth";
+
 
 function Login() {
   const navigate = useNavigate();
@@ -15,7 +17,7 @@ function Login() {
     setSubmitting(true);
 
     try {
-      const response = await fetch("http://localhost:3000/auth/login", {
+      const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

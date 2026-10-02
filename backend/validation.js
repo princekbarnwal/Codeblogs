@@ -31,3 +31,9 @@ const loginSchema = z.object({
 });
 
 export { loginSchema } ;
+
+const refreshSchema = z.object({
+    refresh_token: z.string().trim().min(1)
+});
+
+export { refreshSchema };

@@ -1,37 +1,34 @@
+
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-
+import { API_URL } from "../lib/api";
 import {
     clearTokens,
     getCurrentUser
 } from "../lib/auth";
 
+
 function Profile() {
-
     const { username } = useParams();
-
     const navigate = useNavigate();
-
     const currentUser = getCurrentUser();
 
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [logoutLoading, setLogoutLoading] = useState(false);
+    const [logoutError, setLogoutError] = useState("");
 
-    const isOwner =
-        currentUser?.username === username;
+    const isOwner = currentUser?.username === username;
 
     useEffect(() => {
-
         const fetchProfile = async () => {
-
             try {
-
                 setLoading(true);
                 setError("");
 
                 const response = await fetch(
-                    `http://localhost:3000/users/${username}`
+                    `${API_URL}/users/${username}`
                 );
 
                 const data = await response.json();
@@ -44,34 +41,61 @@ function Profile() {
                 }
 
                 setProfile(data);
-
             } catch (error) {
-
-                setError(
-                    "Unable to connect to the server."
-                );
-
+                setError("Unable to connect to the server.");
             } finally {
-
                 setLoading(false);
-
             }
         };
 
         fetchProfile();
-
     }, [username]);
 
-    const logout = () => {
+    const logout = async () => {
+        if (logoutLoading) return;
 
-        clearTokens();
+        try {
+            setLogoutLoading(true);
+            setLogoutError("");
 
-        window.dispatchEvent(
-            new Event("authChanged")
-        );
+            const refresh_token =
+                localStorage.getItem("refresh_token");
 
-        navigate("/");
+            if (refresh_token) {
+                const response = await fetch(
+                    `${API_URL}/auth/logout`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ refresh_token })
+                    }
+                );
 
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(
+                        data.message || "Logout failed."
+                    );
+                }
+            }
+
+            clearTokens();
+
+            window.dispatchEvent(
+                new Event("authChanged")
+            );
+
+            navigate("/");
+        } catch (error) {
+            console.error("Logout error:", error);
+            setLogoutError(
+                error.message || "Unable to logout."
+            );
+        } finally {
+            setLogoutLoading(false);
+        }
     };
 
     if (loading) {
@@ -92,12 +116,8 @@ function Profile() {
 
     return (
         <main className="profile-page">
-
             <section className="profile-header">
-
-                <h1>
-                    {profile.name}
-                </h1>
+                <h1>{profile.name}</h1>
 
                 {isOwner && (
                     <p className="profile-username">
@@ -107,27 +127,21 @@ function Profile() {
 
                 <div className="profile-stats">
                     <span>
-                        <strong>
-                            {profile.blogCount}
-                        </strong>{" "}
+                        <strong>{profile.blogCount}</strong>{" "}
                         {profile.blogCount === 1
                             ? "Dispatch"
                             : "Dispatches"}
                     </span>
                 </div>
-
             </section>
 
             {profile.latestBlog && (
                 <section className="latest-profile-blog">
-
                     <p className="section-label">
                         Latest dispatch
                     </p>
 
-                    <h2>
-                        {profile.latestBlog.title}
-                    </h2>
+                    <h2>{profile.latestBlog.title}</h2>
 
                     <p>
                         {profile.latestBlog.content.length > 180
@@ -141,13 +155,11 @@ function Profile() {
                     >
                         Read dispatch →
                     </Link>
-
                 </section>
             )}
 
             {isOwner && (
                 <section className="profile-actions">
-
                     <Link
                         to="/my-blogs"
                         className="profile-action-link"
@@ -158,13 +170,18 @@ function Profile() {
                     <button
                         className="profile-logout"
                         onClick={logout}
+                        disabled={logoutLoading}
                     >
-                        Logout
+                        {logoutLoading
+                            ? "Logging out..."
+                            : "Logout"}
                     </button>
 
+                    {logoutError && (
+                        <p role="alert">{logoutError}</p>
+                    )}
                 </section>
             )}
-
         </main>
     );
 }

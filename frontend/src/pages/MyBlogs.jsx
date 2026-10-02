@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { API_URL } from "../lib/api";
 import { getAuthorizationHeader } from "../lib/auth";
+
 
 function MyBlogs() {
     const [blogs, setBlogs] = useState([]);
@@ -11,7 +13,7 @@ function MyBlogs() {
         const fetchMyBlogs = async () => {
             try {
                 const response = await fetch(
-                    "http://localhost:3000/blogs/me",
+                    `${API_URL}/blogs/me`,
                     {
                         headers: {
                             ...getAuthorizationHeader()

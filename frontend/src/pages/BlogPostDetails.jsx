@@ -1,9 +1,9 @@
 
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { API_URL } from "../lib/api";
 import { getAuthorizationHeader } from "../lib/auth";
 
-const apiUrl = "http://localhost:3000";
 
 function BlogPostDetails() {
   const { id } = useParams();
@@ -30,7 +30,7 @@ function BlogPostDetails() {
         setLoading(true);
         setLoadError("");
 
-        const response = await fetch(`${apiUrl}/blogs/${id}`);
+        const response = await fetch(`${API_URL}/blogs/${id}`);
         const data = await response.json();
 
         if (!response.ok) {
@@ -69,7 +69,7 @@ function BlogPostDetails() {
     setSaving(true);
 
     try {
-      const response = await fetch(`${apiUrl}/blogs/${id}`, {
+      const response = await fetch(`${API_URL}/blogs/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -107,7 +107,7 @@ function BlogPostDetails() {
     setDeleting(true);
 
     try {
-      const response = await fetch(`${apiUrl}/blogs/${id}`, {
+      const response = await fetch(`${API_URL}/blogs/${id}`, {
         method: "DELETE",
         headers: getAuthorizationHeader(),
       });

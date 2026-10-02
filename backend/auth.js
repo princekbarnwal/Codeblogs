@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import users from "./users.js";
 import validate from "./validate.js";
-import { loginSchema, registerSchema } from "./validation.js";
+import { loginSchema, refreshSchema, registerSchema } from "./validation.js";
 
 const router = express.Router();
 
@@ -31,7 +31,8 @@ router.post("/register", validate(registerSchema) , async (req,res)=>{
                 username,
                 name,
                 email,
-                password:hashedpassword
+                password:hashedpassword,
+                role:"user"
             })
 
             res.status(201).json({
@@ -88,6 +89,8 @@ router.post("/login", validate(loginSchema) , async(req,res)=>{
                         expiresIn: process.env.REFRESH_TOKEN_EXPIRY
                     }
                 )
+                existinguser.refreshToken=refresh_token;
+                await existinguser.save();
                 return res.status(200).json({
                     message:"Login Successful",
                     access_token,
@@ -97,6 +100,101 @@ router.post("/login", validate(loginSchema) , async(req,res)=>{
         }
     }
     catch (error) {
+        console.log(error);
+        res.status(500).json({message:"Server Unavailable"});
+    }
+});
+
+router.post("/refresh", validate(refreshSchema) , async (req, res) => {
+    try {
+        const refresh_token = req.body.refresh_token;
+
+        const decoded = jwt.verify(
+            refresh_token,
+            process.env.REFRESH_TOKEN_KEY
+        )
+        const id = decoded.userid;
+        const existinguser = await users.findById(id);
+
+        if(!existinguser || existinguser.refreshToken!==refresh_token){
+            return res.status(401).json({
+                message: "Invalid or Expired Reresh token"
+            })
+        }
+    
+        const access_token = jwt.sign(
+            {
+                userid: existinguser._id,
+                username: existinguser.username,
+                role: existinguser.role
+            },
+            process.env.ACCESS_TOKEN_KEY,
+            {
+                expiresIn: process.env.ACCESS_TOKEN_EXPIRY
+            }
+        )
+        const new_refresh_token = jwt.sign(
+            {
+                userid: existinguser._id,
+                username: existinguser.username
+            },
+            process.env.REFRESH_TOKEN_KEY,
+            {
+                expiresIn: process.env.REFRESH_TOKEN_EXPIRY
+            }
+        )
+        existinguser.refreshToken=new_refresh_token;
+        await existinguser.save();
+        return res.status(200).json({
+            message:"Token refreshed successfully",
+            access_token,
+            refresh_token:new_refresh_token
+        });
+    }
+    catch (error) {
+        if (error.name === "JsonWebTokenError" ||
+            error.name === "TokenExpiredError") {
+            return res.status(401).json({
+                message: "Invalid or expired refresh token"
+            });
+        }
+        console.log(error);
+        res.status(500).json({message:"Server Unavailable"});
+    }
+});
+
+router.post("/logout", validate(refreshSchema) , async (req, res) => {
+    try {
+        const refresh_token = req.body.refresh_token;
+
+        const decoded = jwt.verify(
+            refresh_token,
+            process.env.REFRESH_TOKEN_KEY
+        )
+        const id = decoded.userid;
+        const existinguser = await users.findById(id);
+
+        if(!existinguser || existinguser.refreshToken!==refresh_token){
+            return res.status(401).json({
+                message: "Invalid or Expired Reresh token"
+            })
+        }
+
+        existinguser.refreshToken=null;
+        await existinguser.save();
+
+        return res.status(200).json({
+            message:"Logout Successful"
+        })
+
+    } 
+    catch (error) {
+        if (error.name === "JsonWebTokenError" ||
+            error.name === "TokenExpiredError") {
+            return res.status(401).json({
+                message: "Invalid or expired refresh token"
+            });
+        }
         console.log(error);
         res.status(500).json({message:"Server Unavailable"});
     }
