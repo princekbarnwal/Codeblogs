@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest --runInBand",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
@@ -18,11 +19,14 @@
     "express": "^5.2.1",
     "express-rate-limit": "^8.7.0",
     "helmet": "^8.3.0",
-    "jest": "^30.5.2",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^8.24.4",
-    "nodemon": "^3.1.14",
-    "supertest": "^7.3.0",
+    "sanitize-html": "^2.18.0",
     "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "jest": "^30.5.2",
+    "nodemon": "^3.1.14",
+    "supertest": "^7.3.1"
   }
 }

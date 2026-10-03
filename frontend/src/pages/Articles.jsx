@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { API_URL } from "../lib/api";
 
-
 function Articles() {
   const [articles, setArticles] = useState([]);
   const [error, setError] = useState("");
@@ -13,17 +12,25 @@ function Articles() {
       try {
         const response = await fetch(`${API_URL}/articles`);
         const data = await response.json();
+
         if (!response.ok)
           throw new Error(
-            data.error || data.message || "Unable to load articles.",
+            data.error ||
+              data.message ||
+              "Unable to load articles."
           );
+
         setArticles(data);
       } catch (loadError) {
-        setError(loadError.message || "Unable to connect to the server.");
+        setError(
+          loadError.message ||
+            "Unable to connect to the server."
+        );
       } finally {
         setLoading(false);
       }
     };
+
     loadArticles();
   }, []);
 
@@ -35,7 +42,8 @@ function Articles() {
 
           <h1>
             Guides, concepts
-            <br />& technical deep-dives.
+            <br />
+            & technical deep-dives.
           </h1>
 
           <p className="articles-description">
@@ -51,39 +59,39 @@ function Articles() {
             <p className="section-label">ALL ARTICLES</p>
             <h2>Learn something new</h2>
           </div>
-
-          <span className="articles-count">
-            {articles.length} {articles.length === 1 ? "article" : "articles"}
-          </span>
         </div>
 
         <div className="articles-list">
           {loading ? (
-            <p className="empty-articles">Loading articles...</p>
+            <p className="empty-articles">
+              Loading articles...
+            </p>
           ) : error ? (
             <p className="empty-articles">{error}</p>
           ) : articles.length === 0 ? (
-            <p className="empty-articles">No articles published yet.</p>
+            <p className="empty-articles">
+              No articles published yet.
+            </p>
           ) : (
-            articles.map((article, index) => (
+            articles.map((article) => (
               <Link
                 to={`/articles/${article._id}`}
                 className="article-item"
                 key={article._id}
               >
-                <span className="article-number">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-
                 <div className="article-item-content">
                   <div className="article-meta-tag">
-                    <span>{article.category.toUpperCase()}</span>
+                    <span>
+                      {article.category.toUpperCase()}
+                    </span>
 
                     {article.createdAt && (
                       <>
                         <span>·</span>
                         <span>
-                          {new Date(article.createdAt).toLocaleDateString()}
+                          {new Date(
+                            article.createdAt
+                          ).toLocaleDateString()}
                         </span>
                       </>
                     )}

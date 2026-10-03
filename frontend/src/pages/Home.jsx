@@ -3,9 +3,16 @@ import { Link } from "react-router-dom";
 import { API_URL } from "../lib/api";
 import "./Home.css";
 
+const excerpt = (text, length = 145) => {
+  if (!text) {
+    return "";
+  }
 
-const excerpt = (text, length = 145) =>
-  text?.length > length ? `${text.slice(0, length).trim()}...` : text;
+  return text.length > length
+    ? `${text.slice(0, length).trim()}...`
+    : text;
+};
+
 const formatDate = (value) =>
   value
     ? new Date(value).toLocaleDateString("en-US", {
@@ -21,123 +28,274 @@ function Home() {
 
   useEffect(() => {
     fetch(`${API_URL}/blogs`)
-      .then(async (response) => (response.ok ? response.json() : []))
+      .then(async (response) =>
+        response.ok ? response.json() : []
+      )
       .then((data) =>
         setBlogs(
           [...data]
-            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-            .slice(0, 3),
-        ),
+            .sort(
+              (a, b) =>
+                new Date(b.createdAt) -
+                new Date(a.createdAt)
+            )
+            .slice(0, 3)
+        )
       )
       .catch(() => setBlogs([]));
 
     fetch(`${API_URL}/quotes`)
-      .then(async (response) => (response.ok ? response.json() : null))
+      .then(async (response) =>
+        response.ok ? response.json() : null
+      )
       .then(setQuote)
       .catch(() => setQuote(null));
-
   }, []);
+
+  // Convert rich-text HTML into plain text
+  // for the homepage preview.
+  const getPreviewText = (content) => {
+    if (!content) {
+      return "";
+    }
+
+    const tempElement = document.createElement("div");
+
+    tempElement.innerHTML = content;
+
+    const text =
+      tempElement.textContent ||
+      tempElement.innerText ||
+      "";
+
+    return text.replace(/\s+/g, " ").trim();
+  };
 
   return (
     <main className="home">
+
+      {/* Hero */}
       <section className="home-hero">
+
         <div>
+
           <div className="hero-kicker">
             PERSONAL &amp; PUBLIC CODING DEVELOPMENT JOURNAL
           </div>
+
           <h1 className="hero-title">
             Notes from the
             <br />
             edge of <em>curiosity.</em>
           </h1>
+
           <p className="page-copy">
-            A quiet place for software, systems, experiments, and the ideas that
-            become clearer once they are written down.
+            A quiet place for software, systems, experiments,
+            and the ideas that become clearer once they are
+            written down.
           </p>
+
           <div className="hero-actions">
-            <Link className="editorial-button" to="/blogs">
+
+            <Link
+              className="editorial-button"
+              to="/blogs"
+            >
               Explore dispatches →
             </Link>
-            <Link className="secondary-button" to="/create-blog">
+
+            <Link
+              className="secondary-button"
+              to="/create-blog"
+            >
               Write a dispatch
             </Link>
+
           </div>
-          <p className="hero-note">SYSTEMS · SOFTWARE · TECHNOLOGY</p>
+
+          <p className="hero-note">
+            SYSTEMS · SOFTWARE · TECHNOLOGY
+          </p>
+
         </div>
+
         <div className="hero-visual">
+
           <div className="editorial-card">
-            <div className="card-bar">~/CodeBlogs/field-notes</div>
+
+            <div className="card-bar">
+              ~/CodeBlogs/field-notes
+            </div>
+
             <div className="card-body card-code">
+
               <div>
-                <span className="code-muted">01</span> const{" "}
-                <span className="code-green">curiosity</span> = true;
+                <span className="code-muted">
+                  01
+                </span>{" "}
+                const{" "}
+                <span className="code-green">
+                  curiosity
+                </span>{" "}
+                = true;
               </div>
+
               <div>
-                <span className="code-muted">02</span> while (building) {"{"}
+                <span className="code-muted">
+                  02
+                </span>{" "}
+                while (building) {"{"}
               </div>
+
               <div>
-                <span className="code-muted">03</span> &nbsp;&nbsp;learn();
+                <span className="code-muted">
+                  03
+                </span>{" "}
+                &nbsp;&nbsp;learn();
               </div>
+
               <div>
-                <span className="code-muted">04</span> &nbsp;&nbsp;write();
+                <span className="code-muted">
+                  04
+                </span>{" "}
+                &nbsp;&nbsp;write();
               </div>
+
               <div>
-                <span className="code-muted">05</span> {"}"}
+                <span className="code-muted">
+                  05
+                </span>{" "}
+                {"}"}
               </div>
+
             </div>
+
             <div className="card-footer">
-              <span>THOUGHTS IN PROGRESS</span>
-              <span>ONLINE</span>
+              <span>
+                THOUGHTS IN PROGRESS
+              </span>
+
+              <span>
+                ONLINE
+              </span>
             </div>
+
           </div>
+
         </div>
+
       </section>
 
+      {/* Quote */}
       {quote && (
-        <section className="quote-section" aria-label="Featured quote">
+        <section
+          className="quote-section"
+          aria-label="Featured quote"
+        >
+
           <div className="quote-rule" />
+
           <blockquote>
-            <p>“{quote.quote}”</p>
-            <footer>— {quote.author}</footer>
+
+            <p>
+              “{quote.quote}”
+            </p>
+
+            <footer>
+              — {quote.author}
+            </footer>
+
           </blockquote>
-          <div className="quote-label">A NOTE TO KEEP</div>
+
+          <div className="quote-label">
+            A NOTE TO KEEP
+          </div>
+
         </section>
       )}
 
+      {/* Latest Writing */}
       <section className="home-section latest-writing-section">
+
         <div className="section-head">
+
           <div>
-            <p className="eyebrow">LATEST WRITING</p>
-            <h2>Latest dispatches.</h2>
+
+            <p className="eyebrow">
+              LATEST WRITING
+            </p>
+
+            <h2>
+              Latest dispatches.
+            </h2>
+
           </div>
-          <Link className="text-link" to="/blogs">
+
+          <Link
+            className="text-link"
+            to="/blogs"
+          >
             View all dispatches →
           </Link>
+
         </div>
+
         <div className="preview-grid">
+
           {blogs.length ? (
-            blogs.map((blog, index) => (
-              <Link
-                className="preview"
-                to={`/blogs/${blog._id}`}
-                key={blog._id}
-              >
-                <span className="preview-meta">
-                  {String(index + 1).padStart(2, "0")} &nbsp; DISPATCH ·{" "}
-                  {formatDate(blog.createdAt).toUpperCase()}
-                </span>
-                <div>
-                  <h3>{blog.title}</h3>
-                  <p>{excerpt(blog.article, 130)}</p>
-                </div>
-                <span className="preview-meta">Read dispatch →</span>
-              </Link>
-            ))
+            blogs.map((blog, index) => {
+
+              const previewText = getPreviewText(
+                blog.content
+              );
+
+              return (
+                <Link
+                  className="preview"
+                  to={`/blogs/${blog._id}`}
+                  key={blog._id}
+                >
+
+                  <span className="preview-meta">
+                    {String(index + 1).padStart(2, "0")}
+                    &nbsp; DISPATCH ·{" "}
+                    {formatDate(
+                      blog.createdAt
+                    ).toUpperCase()}
+                  </span>
+
+                  <div>
+
+                    <h3>
+                      {blog.title}
+                    </h3>
+
+                    <p>
+                      {excerpt(
+                        previewText,
+                        130
+                      )}
+                    </p>
+
+                  </div>
+
+                  <span className="preview-meta">
+                    Read dispatch →
+                  </span>
+
+                </Link>
+              );
+            })
           ) : (
-            <p className="empty-message">No dispatches published yet.</p>
+            <p className="empty-message">
+              No dispatches published yet.
+            </p>
           )}
+
         </div>
+
       </section>
+
     </main>
   );
 }

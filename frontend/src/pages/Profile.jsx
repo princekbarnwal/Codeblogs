@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { API_URL } from "../lib/api";
@@ -6,7 +5,6 @@ import {
     clearTokens,
     getCurrentUser
 } from "../lib/auth";
-
 
 function Profile() {
     const { username } = useParams();
@@ -69,12 +67,15 @@ function Profile() {
                         headers: {
                             "Content-Type": "application/json"
                         },
-                        body: JSON.stringify({ refresh_token })
+                        body: JSON.stringify({
+                            refresh_token
+                        })
                     }
                 );
 
                 if (!response.ok) {
                     const data = await response.json();
+
                     throw new Error(
                         data.message || "Logout failed."
                     );
@@ -90,12 +91,32 @@ function Profile() {
             navigate("/");
         } catch (error) {
             console.error("Logout error:", error);
+
             setLogoutError(
                 error.message || "Unable to logout."
             );
         } finally {
             setLogoutLoading(false);
         }
+    };
+
+    // Convert rich-text HTML into plain text
+    // for the profile blog preview.
+    const getPreviewText = (content) => {
+        if (!content) {
+            return "";
+        }
+
+        const tempElement = document.createElement("div");
+
+        tempElement.innerHTML = content;
+
+        const text =
+            tempElement.textContent ||
+            tempElement.innerText ||
+            "";
+
+        return text.replace(/\s+/g, " ").trim();
     };
 
     if (loading) {
@@ -114,10 +135,18 @@ function Profile() {
         );
     }
 
+    const latestBlogPreview = getPreviewText(
+        profile.latestBlog?.content
+    );
+
     return (
         <main className="profile-page">
+
             <section className="profile-header">
-                <h1>{profile.name}</h1>
+
+                <h1>
+                    {profile.name}
+                </h1>
 
                 {isOwner && (
                     <p className="profile-username">
@@ -127,26 +156,32 @@ function Profile() {
 
                 <div className="profile-stats">
                     <span>
-                        <strong>{profile.blogCount}</strong>{" "}
+                        <strong>
+                            {profile.blogCount}
+                        </strong>{" "}
                         {profile.blogCount === 1
                             ? "Dispatch"
                             : "Dispatches"}
                     </span>
                 </div>
+
             </section>
 
             {profile.latestBlog && (
                 <section className="latest-profile-blog">
+
                     <p className="section-label">
                         Latest dispatch
                     </p>
 
-                    <h2>{profile.latestBlog.title}</h2>
+                    <h2>
+                        {profile.latestBlog.title}
+                    </h2>
 
                     <p>
-                        {profile.latestBlog.content.length > 180
-                            ? profile.latestBlog.content.slice(0, 180) + "..."
-                            : profile.latestBlog.content}
+                        {latestBlogPreview.length > 180
+                            ? latestBlogPreview.slice(0, 180) + "..."
+                            : latestBlogPreview}
                     </p>
 
                     <Link
@@ -155,11 +190,13 @@ function Profile() {
                     >
                         Read dispatch →
                     </Link>
+
                 </section>
             )}
 
             {isOwner && (
                 <section className="profile-actions">
+
                     <Link
                         to="/my-blogs"
                         className="profile-action-link"
@@ -178,10 +215,14 @@ function Profile() {
                     </button>
 
                     {logoutError && (
-                        <p role="alert">{logoutError}</p>
+                        <p role="alert">
+                            {logoutError}
+                        </p>
                     )}
+
                 </section>
             )}
+
         </main>
     );
 }

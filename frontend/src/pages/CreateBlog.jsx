@@ -1,9 +1,8 @@
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { API_URL } from "../lib/api";
 import { getAuthorizationHeader } from "../lib/auth";
-
+import RichTextEditor from "../components/RichTextEditor";
 
 function CreateBlog() {
   const navigate = useNavigate();
@@ -65,7 +64,9 @@ function CreateBlog() {
 
         <div className="create-header">
           <p className="eyebrow">NEW POST</p>
+
           <h1>Write something.</h1>
+
           <p>
             Share an idea, experience, or something you've learned.
           </p>
@@ -74,6 +75,7 @@ function CreateBlog() {
         <form className="blog-form" onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="blog-title">Title</label>
+
             <input
               id="blog-title"
               type="text"
@@ -111,13 +113,11 @@ function CreateBlog() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="blog-content">Content</label>
-            <textarea
-              id="blog-content"
-              placeholder="Start writing..."
-              value={content}
-              onChange={(event) => setContent(event.target.value)}
-              required
+            <label>Content</label>
+
+            <RichTextEditor
+              content={content}
+              setContent={setContent}
             />
           </div>
 

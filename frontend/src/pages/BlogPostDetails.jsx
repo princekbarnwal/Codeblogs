@@ -1,25 +1,32 @@
-
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { API_URL } from "../lib/api";
-import { getAuthorizationHeader } from "../lib/auth";
-
+import {
+  getAuthorizationHeader,
+  getCurrentUser,
+} from "../lib/auth";
+import RichTextEditor from "../components/RichTextEditor";
 
 function BlogPostDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const currentUser = getCurrentUser();
 
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
+
   const [editing, setEditing] = useState(false);
+
   const [editForm, setEditForm] = useState({
     title: "",
     content: "",
     anonymous: false,
   });
+
   const [editError, setEditError] = useState("");
   const [saving, setSaving] = useState(false);
+
   const [showDeletePanel, setShowDeletePanel] = useState(false);
   const [deleteError, setDeleteError] = useState("");
   const [deleting, setDeleting] = useState(false);
@@ -65,6 +72,7 @@ function BlogPostDetails() {
 
   const saveChanges = async (event) => {
     event.preventDefault();
+
     setEditError("");
     setSaving(true);
 
@@ -90,6 +98,7 @@ function BlogPostDetails() {
                 data.message ||
                 "Unable to save changes."
         );
+
         return;
       }
 
@@ -150,6 +159,7 @@ function BlogPostDetails() {
       <main className="blog-details-page">
         <div className="article-container">
           <h1>{loadError || "Blog not found"}</h1>
+
           <Link to="/blogs" className="back-to-blogs">
             ← Back to Blogs
           </Link>
@@ -158,17 +168,26 @@ function BlogPostDetails() {
     );
   }
 
+  const isOwner =
+    currentUser?.username === blog.author?.username;
+
   return (
     <main className="blog-details-page">
       <article className="article-container">
+
         <Link to="/blogs" className="back-to-blogs">
           ← Back to Blogs
         </Link>
 
         {editing ? (
           <form className="blog-form" onSubmit={saveChanges}>
+
+            {/* Title */}
             <div className="form-group">
-              <label htmlFor="edit-title">Title</label>
+              <label htmlFor="edit-title">
+                Title
+              </label>
+
               <input
                 id="edit-title"
                 value={editForm.title}
@@ -182,9 +201,14 @@ function BlogPostDetails() {
               />
             </div>
 
+            {/* Publish As */}
             <div className="form-group">
-              <label>Publish as</label>
+              <label>
+                Publish as
+              </label>
+
               <div className="author-options">
+
                 <label>
                   <input
                     type="radio"
@@ -197,6 +221,7 @@ function BlogPostDetails() {
                       })
                     }
                   />
+
                   Use my username
                 </label>
 
@@ -212,31 +237,39 @@ function BlogPostDetails() {
                       })
                     }
                   />
+
                   Post anonymously
                 </label>
+
               </div>
             </div>
 
+            {/* Rich Text Content */}
             <div className="form-group">
-              <label htmlFor="edit-content">Content</label>
-              <textarea
-                id="edit-content"
-                value={editForm.content}
-                onChange={(event) =>
+              <label>
+                Content
+              </label>
+
+              <RichTextEditor
+                content={editForm.content}
+                setContent={(value) =>
                   setEditForm({
                     ...editForm,
-                    content: event.target.value,
+                    content: value,
                   })
                 }
-                required
               />
             </div>
 
             {editError && (
-              <p className="form-error">{editError}</p>
+              <p className="form-error">
+                {editError}
+              </p>
             )}
 
+            {/* Edit Actions */}
             <div className="form-footer">
+
               <button
                 type="button"
                 className="delete-cancel-btn"
@@ -250,58 +283,77 @@ function BlogPostDetails() {
                 className="publish-button"
                 disabled={saving}
               >
-                {saving ? "Saving..." : "Save changes"}
+                {saving
+                  ? "Saving..."
+                  : "Save changes"}
               </button>
+
             </div>
           </form>
         ) : (
           <>
+            {/* Blog Header */}
             <header className="article-header">
-              <p className="article-category">BLOG</p>
-              <h1>{blog.title}</h1>
+
+              <p className="article-category">
+                BLOG
+              </p>
+
+              <h1>
+                {blog.title}
+              </h1>
 
               <p className="blog-author">
                 {blog.anonymous
                   ? "Written by Anonymous"
-                  : `Written by ${blog.author?.name || "Unknown"} (@${blog.author?.username || "unknown"})`}
+                  : `Written by ${
+                      blog.author?.name || "Unknown"
+                    } (@${
+                      blog.author?.username || "unknown"
+                    })`}
               </p>
 
               <div className="article-meta">
                 {blog.createdAt && (
                   <span>
-                    {new Date(blog.createdAt).toLocaleDateString(
-                      "en-US",
-                      {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      }
-                    )}
+                    {new Date(
+                      blog.createdAt
+                    ).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
                   </span>
                 )}
               </div>
+
             </header>
 
             <div className="article-divider" />
 
-            <div className="article-body">
-              {(blog.content || "").split("\n").map(
-                (paragraph, index) =>
-                  paragraph.trim() && (
-                    <p key={index}>{paragraph}</p>
-                  )
-              )}
-            </div>
+            {/* Rich Text Blog Content */}
+            <div
+              className="article-body"
+              dangerouslySetInnerHTML={{
+                __html: blog.content || "",
+              }}
+            />
           </>
         )}
 
+        {/* Footer */}
         <footer className="article-footer">
-          <Link to="/blogs" className="back-to-blogs">
+
+          <Link
+            to="/blogs"
+            className="back-to-blogs"
+          >
             ← Back to all blogs
           </Link>
 
-          {!editing && (
+          {isOwner && !editing && (
             <div className="blog-actions">
+
               {!showDeletePanel ? (
                 <>
                   <button
@@ -313,22 +365,28 @@ function BlogPostDetails() {
 
                   <button
                     className="delete-blog-btn"
-                    onClick={() => setShowDeletePanel(true)}
+                    onClick={() =>
+                      setShowDeletePanel(true)
+                    }
                   >
                     Delete Blog
                   </button>
                 </>
               ) : (
                 <div className="delete-panel">
+
                   <p className="delete-panel-label">
                     Delete this blog permanently?
                   </p>
 
                   <div className="delete-form-actions">
+
                     <button
                       type="button"
                       className="delete-cancel-btn"
-                      onClick={() => setShowDeletePanel(false)}
+                      onClick={() =>
+                        setShowDeletePanel(false)
+                      }
                     >
                       Cancel
                     </button>
@@ -339,18 +397,27 @@ function BlogPostDetails() {
                       onClick={deleteBlog}
                       disabled={deleting}
                     >
-                      {deleting ? "Deleting..." : "Confirm Delete"}
+                      {deleting
+                        ? "Deleting..."
+                        : "Confirm Delete"}
                     </button>
+
                   </div>
 
                   {deleteError && (
-                    <p className="delete-error">{deleteError}</p>
+                    <p className="delete-error">
+                      {deleteError}
+                    </p>
                   )}
+
                 </div>
               )}
+
             </div>
           )}
+
         </footer>
+
       </article>
     </main>
   );

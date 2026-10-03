@@ -13,11 +13,14 @@ import "dotenv/config";
 import { authlimit , createbloglimit , readbloglimit } from "./ratelimiter.js";
 import validate from "./validate.js";
 import { createBlogSchema , updateBlogSchema } from "./validation.js";
+import sanitizeBlogContent from "./sanitize.js";
 
 const app=express();
 
 app.use(helmet());
-app.use(cors());
+app.use(cors({
+    origin: process.env.FRONTEND_URL
+}));
 app.use(express.json());
 app.use("/auth", authlimit , router);
 
@@ -138,6 +141,7 @@ app.post('/blogs', createbloglimit , verifytoken , validate(createBlogSchema) , 
     const content=req.body.content;
     const author=req.user.userid;
     const anonymous = req.body.anonymous ?? false;
+
     try {
         if (!title?.trim() || !content?.trim()) {
             return res.status(400).json({
@@ -149,9 +153,12 @@ app.post('/blogs', createbloglimit , verifytoken , validate(createBlogSchema) , 
                 message: "Anonymous must be a boolean"
             });
         }
+        
+        const cleanContent = sanitizeBlogContent(content);
+
         const newBlog = await blogs.create({
             title: title.trim(),
-            content: content,
+            content: cleanContent,
             author: author,
             anonymous: anonymous
         });
@@ -184,7 +191,7 @@ app.put('/blogs/:id', createbloglimit ,verifytoken , validate(updateBlogSchema) 
             if(typeof(content)!=="string" || !content.trim()){
                 return res.status(400).json({message:"content can not be empty"})
             }
-            blog.content=content.trim();
+            blog.content=sanitizeBlogContent(content.trim());
         }
         if(anonymous!==undefined){
             if(typeof(anonymous)!=="boolean"){
