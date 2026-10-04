@@ -2,10 +2,11 @@ import request from "supertest";
 import app from "./app.js";
 import mongoose from "mongoose";
 import "dotenv/config";
+import users from "./users.js";
 
 async function connectdbtest() {
     try {
-        const MONGO_URI_TEST = process.env.MONGO_URI_TEST;
+        const MONGO_URI_TEST = process.env.MONGO_URI_TEST || process.env.MONGO_URI_TEST_DOCKER;
         await mongoose.connect(MONGO_URI_TEST);
         console.log("MONGO_DB connected successfully");
         
@@ -15,12 +16,16 @@ async function connectdbtest() {
     }
 }
 
+const TEST_EMAIL = "test@gmail.com";
+
 beforeAll(async () => {
     await connectdbtest();
+    await users.deleteMany({ $or: [{ email: TEST_EMAIL }, { username: "test1234" }] });
 })
 
 afterAll(async () => {
-  await mongoose.connection.close();
+    await users.deleteMany({ $or: [{ email: TEST_EMAIL }, { username: "test1234" }] });
+    await mongoose.connection.close();
 });
 
 test('GET /quotes should return 200', async () => {
