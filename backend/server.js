@@ -1,6 +1,9 @@
 import "dotenv/config";
+import redis from "./redis.js";
 import connectdb from "./db.js";
 import app from "./app.js";
+
+redis.on("ready" , () => console.log("Redis connected successfully"));
 
 await connectdb();
 

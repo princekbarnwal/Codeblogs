@@ -4,6 +4,7 @@ services:
     environment:
       MONGO_URI_DOCKER: ${MONGO_URI_DOCKER}
       MONGO_URI_TEST_DOCKER: ${MONGO_URI_TEST_DOCKER}
+      REDIS_URL_DOCKER: ${REDIS_URL_DOCKER}
       ACCESS_TOKEN_KEY: ${ACCESS_TOKEN_KEY}
       REFRESH_TOKEN_KEY: ${REFRESH_TOKEN_KEY}
       ACCESS_TOKEN_EXPIRY: ${ACCESS_TOKEN_EXPIRY}
@@ -12,8 +13,14 @@ services:
       - "3000:3000"
     depends_on: 
       - mongo
+      - redis
   mongo:
     image: mongo:latest
     command: mongod
     ports:
       - "27017:27017"
+  redis:
+    image: redis:latest
+    command: redis-server
+    ports:
+      - "6379:6379"
