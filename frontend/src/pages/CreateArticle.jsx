@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { API_URL } from "../lib/api";
-import { getAuthorizationHeader, isAdmin } from "../lib/auth";
+import { apiFetch } from "../lib/api";
+import { isAdmin } from "../lib/auth";
 
 
 function CreateArticle() {
@@ -23,12 +23,8 @@ function CreateArticle() {
     setError("");
     setSubmitting(true);
     try {
-      const response = await fetch(`${API_URL}/articles`, {
+      const response = await apiFetch("/articles", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...getAuthorizationHeader(),
-        },
         body: JSON.stringify(form),
       });
       const data = await response.json();

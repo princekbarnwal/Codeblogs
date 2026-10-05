@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { API_URL } from "../lib/api";
-import {
-  getAuthorizationHeader,
-  getCurrentUser,
-} from "../lib/auth";
+import { API_URL, apiFetch } from "../lib/api";
+import { getCurrentUser } from "../lib/auth";
 import RichTextEditor from "../components/RichTextEditor";
 
 function BlogPostDetails() {
@@ -77,12 +74,8 @@ function BlogPostDetails() {
     setSaving(true);
 
     try {
-      const response = await fetch(`${API_URL}/blogs/${id}`, {
+      const response = await apiFetch(`/blogs/${id}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          ...getAuthorizationHeader(),
-        },
         body: JSON.stringify(editForm),
       });
 
@@ -116,9 +109,8 @@ function BlogPostDetails() {
     setDeleting(true);
 
     try {
-      const response = await fetch(`${API_URL}/blogs/${id}`, {
+      const response = await apiFetch(`/blogs/${id}`, {
         method: "DELETE",
-        headers: getAuthorizationHeader(),
       });
 
       const data = await response.json();

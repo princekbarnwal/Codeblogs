@@ -3,7 +3,8 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { API_URL } from "../lib/api";
 import {
     clearTokens,
-    getCurrentUser
+    getCurrentUser,
+    getRefreshToken
 } from "../lib/auth";
 
 function Profile() {
@@ -15,7 +16,6 @@ function Profile() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [logoutLoading, setLogoutLoading] = useState(false);
-    const [logoutError, setLogoutError] = useState("");
 
     const isOwner = currentUser?.username === username;
 
@@ -52,51 +52,27 @@ function Profile() {
     const logout = async () => {
         if (logoutLoading) return;
 
+        setLogoutLoading(true);
+
+        const refresh_token = getRefreshToken();
+
         try {
-            setLogoutLoading(true);
-            setLogoutError("");
-
-            const refresh_token =
-                localStorage.getItem("refresh_token");
-
             if (refresh_token) {
-                const response = await fetch(
-                    `${API_URL}/auth/logout`,
-                    {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({
-                            refresh_token
-                        })
-                    }
-                );
-
-                if (!response.ok) {
-                    const data = await response.json();
-
-                    throw new Error(
-                        data.message || "Logout failed."
-                    );
-                }
+                await fetch(`${API_URL}/auth/logout`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ refresh_token })
+                });
             }
-
-            clearTokens();
-
-            window.dispatchEvent(
-                new Event("authChanged")
-            );
-
-            navigate("/");
         } catch (error) {
             console.error("Logout error:", error);
-
-            setLogoutError(
-                error.message || "Unable to logout."
-            );
         } finally {
+            clearTokens();
+            window.dispatchEvent(new Event("authChanged"));
             setLogoutLoading(false);
+            navigate("/");
         }
     };
 
@@ -107,16 +83,14 @@ function Profile() {
             return "";
         }
 
-        const tempElement = document.createElement("div");
+        const doc = new DOMParser().parseFromString(
+            content,
+            "text/html"
+        );
 
-        tempElement.innerHTML = content;
-
-        const text =
-            tempElement.textContent ||
-            tempElement.innerText ||
-            "";
-
-        return text.replace(/\s+/g, " ").trim();
+        return (doc.body.textContent || "")
+            .replace(/\s+/g, " ")
+            .trim();
     };
 
     if (loading) {
@@ -213,12 +187,6 @@ function Profile() {
                             ? "Logging out..."
                             : "Logout"}
                     </button>
-
-                    {logoutError && (
-                        <p role="alert">
-                            {logoutError}
-                        </p>
-                    )}
 
                 </section>
             )}

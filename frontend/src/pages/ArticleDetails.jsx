@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { API_URL } from "../lib/api";
-import { getAuthorizationHeader, isAdmin } from "../lib/auth";
+import { API_URL, apiFetch } from "../lib/api";
+import { isAdmin } from "../lib/auth";
 
 
 function ArticleDetails() {
@@ -47,12 +47,8 @@ function ArticleDetails() {
     setEditError("");
     setSaving(true);
     try {
-      const response = await fetch(`${API_URL}/articles/${id}`, {
+      const response = await apiFetch(`/articles/${id}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          ...getAuthorizationHeader(),
-        },
         body: JSON.stringify(editForm),
       });
       const data = await response.json();
@@ -79,9 +75,8 @@ function ArticleDetails() {
     setDeleteError("");
     setDeleting(true);
     try {
-      const response = await fetch(`${API_URL}/articles/${id}`, {
+      const response = await apiFetch(`/articles/${id}`, {
         method: "DELETE",
-        headers: getAuthorizationHeader(),
       });
       const data = await response.json();
       if (response.ok) {
