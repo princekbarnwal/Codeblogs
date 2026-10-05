@@ -36,3 +36,6 @@ export function isAdmin() {
   const user = getCurrentUser();
   return user?.role === "admin" || user?.isAdmin === true;
 }
+export function getRefreshToken() {
+  return localStorage.getItem(REFRESH_TOKEN_KEY);
+}

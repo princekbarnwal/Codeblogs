@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { API_URL } from "../lib/api";
-import { getAuthorizationHeader } from "../lib/auth";
+import { apiFetch } from "../lib/api";
 import RichTextEditor from "../components/RichTextEditor";
 
 function CreateBlog() {
@@ -19,12 +18,8 @@ function CreateBlog() {
     setSubmitting(true);
 
     try {
-      const response = await fetch(`${API_URL}/blogs`, {
+      const response = await apiFetch("/blogs", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...getAuthorizationHeader(),
-        },
         body: JSON.stringify({
           title,
           content,
