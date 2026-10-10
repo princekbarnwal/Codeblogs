@@ -1,5 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
+import redis from "./redis.js";
 import helmet from "helmet";
 import blogs from "./blogs.js";
 import articles from "./articles.js";
@@ -23,6 +24,21 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use("/auth", authlimit , router);
+
+const LIST_TTL = process.env.REDIS_TIME_LIMIT;
+
+async function blogListKey(page, limit) {
+    const version = (await redis.get("blogs:version")) || "0";
+    return `blogs:list:v${version}:p${page}:l${limit}`;
+}
+
+async function invalidateBlogCache() {
+    try {
+        await redis.incr("blogs:version");
+    } catch (error) {
+        console.log("Cache invalidation failed:", error.message);
+    }
+}
 
 app.get('/quotes', readbloglimit , (req,res)=>{
     const quote= quotes[Math.floor(Math.random() * quotes.length)];
@@ -107,6 +123,22 @@ app.get('/blogs', readbloglimit, async (req, res) => {
         const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 10, 1), 50);
         const skip = (page - 1) * limit;
 
+        const useCache = !search;
+        let cacheKey;
+
+        if (useCache) {
+            try {
+                cacheKey = await blogListKey(page, limit);
+                const cached = await redis.get(cacheKey);
+
+                if (cached) {
+                    return res.status(200).json(JSON.parse(cached));
+                }
+            } catch (error) {
+                console.log("Cache read failed:", error.message);
+            }
+        }
+
         let query = {};
 
         if (search) {
@@ -140,12 +172,22 @@ app.get('/blogs', readbloglimit, async (req, res) => {
             return blogData;
         });
 
-        return res.status(200).json({
+        const payload = {
             blogs: publicBlogs,
             page,
             totalPages: Math.ceil(total / limit),
             total
-        });
+        };
+
+        if (useCache && cacheKey) {
+            try {
+                await redis.set(cacheKey, JSON.stringify(payload), { EX: LIST_TTL });
+            } catch (error) {
+                console.log("Cache write failed:", error.message);
+            }
+        }
+
+        return res.status(200).json(payload);
     }
     catch (error) {
         console.log(error);
@@ -207,6 +249,7 @@ app.post('/blogs', createbloglimit , verifytoken , validate(createBlogSchema) , 
             author: author,
             anonymous: anonymous
         });
+        await invalidateBlogCache();
         res.status(201).json(newBlog);
     } 
     catch (error) {
@@ -217,6 +260,11 @@ app.post('/blogs', createbloglimit , verifytoken , validate(createBlogSchema) , 
 
 app.put('/blogs/:id', createbloglimit ,verifytoken , validate(updateBlogSchema) , async (req , res) => {
     const id=req.params.id;
+    if (!mongoose.isValidObjectId(id)) {
+        return res.status(400).json({
+            message: "Invalid ID"
+        });
+    }
     const title=req.body.title;
     const content=req.body.content;
     const anonymous = req.body.anonymous;
@@ -245,7 +293,9 @@ app.put('/blogs/:id', createbloglimit ,verifytoken , validate(updateBlogSchema) 
             blog.anonymous=anonymous;
         }
         await blog.save();
-        return res.status(200).json({message:"Blog upddated successfully",blog});
+        await blog.populate("author", "name username");
+        await invalidateBlogCache();
+        return res.status(200).json({message:"Blog updated successfully",blog});
     } 
     catch (error) {
         console.log(error);
@@ -263,10 +313,11 @@ app.delete('/blogs/:id', createbloglimit , verifytoken , async(req,res)=>{
     try {
         const blog = await blogs.findById(id);
         if(!blog)
-            return res.status(404).json("Blog not found");
+            return res.status(404).json({message:"Blog not found"});
         else{
             if(blog.author.toString()===req.user.userid.toString()){
                 await blogs.findByIdAndDelete(id);
+                await invalidateBlogCache();
                 res.json({message: "Blog Deleted Successfully"});
             }
             else{
@@ -274,6 +325,7 @@ app.delete('/blogs/:id', createbloglimit , verifytoken , async(req,res)=>{
             }
         }
     } catch (error) {
+        console.log(error);
         res.status(500).json({error:"Server Unavailable"});
     }
 });

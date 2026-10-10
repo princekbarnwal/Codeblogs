@@ -95,7 +95,7 @@ function BlogPostDetails() {
         return;
       }
 
-      setBlog(data);
+      setBlog(data.blog);
       setEditing(false);
     } catch {
       setEditError("Unable to connect to the server.");
