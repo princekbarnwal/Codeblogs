@@ -27,22 +27,14 @@ function Home() {
   const [quote, setQuote] = useState(null);
 
   useEffect(() => {
-    fetch(`${API_URL}/blogs`)
-      .then(async (response) =>
-        response.ok ? response.json() : []
-      )
-      .then((data) =>
-        setBlogs(
-          [...data]
-            .sort(
-              (a, b) =>
-                new Date(b.createdAt) -
-                new Date(a.createdAt)
-            )
-            .slice(0, 3)
-        )
-      )
-      .catch(() => setBlogs([]));
+    fetch(`${API_URL}/blogs?limit=3`)
+    .then(async (response) =>
+      response.ok ? response.json() : { 
+        blogs: [] 
+      }
+    )
+    .then((data) => setBlogs(data.blogs || []))
+    .catch(() => setBlogs([]));
 
     fetch(`${API_URL}/quotes`)
       .then(async (response) =>

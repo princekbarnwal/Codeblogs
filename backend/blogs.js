@@ -22,5 +22,8 @@ const blogsschema = new mongoose.Schema({
     timestamps:true
 });
 
+blogsschema.index({ createdAt: -1 });
+blogsschema.index({ author: 1, createdAt: -1 });
+
 const blogs=mongoose.model("Blogs",blogsschema);
 export default blogs;

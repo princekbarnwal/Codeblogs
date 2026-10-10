@@ -2,19 +2,33 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { API_URL } from "../lib/api";
 
+// Convert rich-text HTML into plain text for the blog preview
+const getPreviewText = (content) => {
+  if (!content) return "";
+
+  // put a space after each block tag so paragraphs don't run together
+  const spaced = content.replace(/<\/(p|h[1-6]|li|div|blockquote)>/gi, " ");
+  const doc = new DOMParser().parseFromString(spaced, "text/html");
+
+  return (doc.body.textContent || "").replace(/\s+/g, " ").trim();
+};
+
 function Blogs() {
   const [blogs, setBlogs] = useState([]);
   const [search, setSearch] = useState("");
+  const [appliedSearch, setAppliedSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
-  const loadBlogs = async (searchTerm = "") => {
+  const loadBlogs = async (searchTerm = "", pageNumber = 1) => {
     try {
       setLoading(true);
       setError("");
 
       const response = await fetch(
-        `${API_URL}/blogs?search=${encodeURIComponent(searchTerm)}`
+        `${API_URL}/blogs?search=${encodeURIComponent(searchTerm)}&page=${pageNumber}&limit=10`
       );
 
       const data = await response.json();
@@ -25,7 +39,9 @@ function Blogs() {
         );
       }
 
-      setBlogs(data);
+      setBlogs(data.blogs);
+      setPage(data.page);
+      setTotalPages(data.totalPages);
     } catch (loadError) {
       setError(
         loadError.message || "Unable to connect to the server."
@@ -41,26 +57,20 @@ function Blogs() {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    loadBlogs(search.trim());
+    const term = search.trim();
+    setAppliedSearch(term);
+    loadBlogs(term, 1);
   };
 
   const handleClear = () => {
     setSearch("");
-    loadBlogs("");
+    setAppliedSearch("");
+    loadBlogs("", 1);
   };
 
-  // Convert rich-text HTML into plain text for the blog preview
-  const getPreviewText = (content) => {
-    if (!content) {
-      return "";
-    }
-
-    const tempElement = document.createElement("div");
-    tempElement.innerHTML = content;
-
-    const text = tempElement.textContent || tempElement.innerText || "";
-
-    return text.replace(/\s+/g, " ").trim();
+  const goToPage = (pageNumber) => {
+    loadBlogs(appliedSearch, pageNumber);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
@@ -137,7 +147,7 @@ function Blogs() {
             </p>
           ) : blogs.length === 0 ? (
             <p className="empty-blogs">
-              {search
+              {appliedSearch
                 ? "No blogs found. Try another search."
                 : "No blogs published yet."}
             </p>
@@ -201,6 +211,31 @@ function Blogs() {
           )}
 
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && !loading && !error && (
+          <nav className="pagination" aria-label="Pagination">
+            <button
+              type="button"
+              onClick={() => goToPage(page - 1)}
+              disabled={page <= 1}
+            >
+              ← Previous
+            </button>
+
+            <span>
+              Page {page} of {totalPages}
+            </span>
+
+            <button
+              type="button"
+              onClick={() => goToPage(page + 1)}
+              disabled={page >= totalPages}
+            >
+              Next →
+            </button>
+          </nav>
+        )}
       </section>
     </main>
   );

@@ -60,38 +60,76 @@ app.get('/users/:username' , readbloglimit , async (req, res)=>{
     }
 });
 
-app.get('/blogs/me' , readbloglimit ,verifytoken, async (req, res)=>{
+app.get('/blogs/me', readbloglimit, verifytoken, async (req, res) => {
     try {
-        const myblogs = await blogs.find({author: req.user.userid})
-        .sort({createdAt: -1});
+        const search = req.query.search?.trim();
 
-        return res.status(200).json(myblogs)
-    } 
+        const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+        const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 10, 1), 50);
+        const skip = (page - 1) * limit;
+
+        const query = { author: req.user.userid };
+
+        if (search) {
+            const escsearch = search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+            query.$or = [
+                { title: { $regex: escsearch, $options: "i" } },
+                { content: { $regex: escsearch, $options: "i" } }
+            ];
+        }
+
+        const [myblogs, total] = await Promise.all([
+            blogs.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit),
+            blogs.countDocuments(query)
+        ]);
+
+        return res.status(200).json({
+            blogs: myblogs,
+            page,
+            totalPages: Math.ceil(total / limit),
+            total
+        });
+    }
     catch (error) {
         console.log(error);
         return res.status(500).json({
             message: "Server unavailable"
-        })
+        });
     }
 });
 
-app.get('/blogs', readbloglimit , async (req,res)=>{
+app.get('/blogs', readbloglimit, async (req, res) => {
     try {
         const search = req.query.search?.trim();
 
+        const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+        const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 10, 1), 50);
+        const skip = (page - 1) * limit;
+
         let query = {};
 
-        if(search){
-            const escsearch = search.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+        if (search) {
+            const escsearch = search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
             query = {
-                $or:[
-                    {title: {$regex: escsearch, $options: "i"}},
-                    {content: {$regex: escsearch, $options: "i"}}
+                $or: [
+                    { title: { $regex: escsearch, $options: "i" } },
+                    { content: { $regex: escsearch, $options: "i" } }
                 ]
-            }
+            };
         }
-        const result = await blogs.find(query).populate("author", "name username").sort({createdAt:-1});
+
+        const [result, total] = await Promise.all([
+            blogs
+                .find(query)
+                .populate("author", "name username")
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(limit),
+            blogs.countDocuments(query)
+        ]);
+
         const publicBlogs = result.map((blog) => {
             const blogData = blog.toObject();
 
@@ -101,12 +139,18 @@ app.get('/blogs', readbloglimit , async (req,res)=>{
 
             return blogData;
         });
-        return res.status(200).json(publicBlogs);
-    } 
+
+        return res.status(200).json({
+            blogs: publicBlogs,
+            page,
+            totalPages: Math.ceil(total / limit),
+            total
+        });
+    }
     catch (error) {
         console.log(error);
-        
-        res.status(500).json({error:"Server Unavailable"});
+
+        res.status(500).json({ error: "Server Unavailable" });
     }
 });
 
@@ -238,11 +282,41 @@ app.delete('/blogs/:id', createbloglimit , verifytoken , async(req,res)=>{
 // ARTICLES ROUTES
 // =========================
 
-app.get('/articles', readbloglimit , async (req, res) => {
+app.get('/articles', readbloglimit, async (req, res) => {
     try {
-        const all = await articles.find().sort({ createdAt: -1 });
-        res.json(all);
+        const search = req.query.search?.trim();
+
+        const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+        const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 10, 1), 50);
+        const skip = (page - 1) * limit;
+
+        let query = {};
+
+        if (search) {
+            const escsearch = search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+            query = {
+                $or: [
+                    { title: { $regex: escsearch, $options: "i" } },
+                    { content: { $regex: escsearch, $options: "i" } },
+                    { category: { $regex: escsearch, $options: "i" } }
+                ]
+            };
+        }
+
+        const [result, total] = await Promise.all([
+            articles.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit),
+            articles.countDocuments(query)
+        ]);
+
+        res.json({
+            articles: result,
+            page,
+            totalPages: Math.ceil(total / limit),
+            total
+        });
     } catch (error) {
+        console.log(error);
         res.status(500).json({ error: "Server Unavailable" });
     }
 });
