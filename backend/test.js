@@ -17,7 +17,7 @@ async function connectdbtest() {
     }
 }
 
-const TEST_EMAIL = "test@gmail.com";
+const TEST_EMAIL = "test@gmail.com";                                
 
 const waitForRedis = async () => {
     for (let i = 0; i < 50 && !redis.isReady; i++) {
