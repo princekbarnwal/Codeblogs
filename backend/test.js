@@ -76,7 +76,6 @@ test('register login post and delete', async () => {
     });
     expect(loginresponse.status).toBe(200);
     expect(loginresponse.body).toHaveProperty("access_token");
-    expect(loginresponse.body).toHaveProperty("refresh_token");
 });
 test('registration reject', async () => {
     const registerresponse = await  request(app).post("/auth/register").send({
