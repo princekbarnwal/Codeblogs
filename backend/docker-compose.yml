@@ -16,7 +16,7 @@ services:
       - mongo
       - redis
   mongo:
-    image: mongo:8
+    image: mongo:8.2
     command: mongod
     ports:
       - "27017:27017"
