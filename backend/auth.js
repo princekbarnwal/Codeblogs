@@ -94,7 +94,6 @@ router.post("/login", validate(loginSchema) , async(req,res)=>{
                 return res.status(200).json({
                     message:"Login Successful",
                     access_token,
-                    refresh_token
                 });
             }
         }
@@ -148,7 +147,6 @@ router.post("/refresh", validate(refreshSchema) , async (req, res) => {
         return res.status(200).json({
             message:"Token refreshed successfully",
             access_token,
-            refresh_token:new_refresh_token
         });
     }
     catch (error) {
